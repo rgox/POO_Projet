@@ -11,6 +11,7 @@ private:
     sf::Vector2f points[7];
 
 public:
+	Hexagone() {};
     Hexagone(int windowWidth, int windowHeight) {
 		float radius = std::min(windowWidth, windowHeight) * 0.5f; // 50% of the smallest dimension
 		float centerX = windowWidth / 2.0f;
