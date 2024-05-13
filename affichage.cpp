@@ -135,43 +135,59 @@ bool Affiche::menu(sf::RenderWindow& window) {
 
 
 bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
-        // Effacement de la fenêtre
-        window.clear();
-		while(window.isOpen()){
-        // Dessin de l'arrière-plan
-		while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
+    // Effacement de la fenêtre
+    window.clear();
+    
+    while (window.isOpen()) {
+        // Gestion des événements
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
+                return false;
+            }
         }
 
-		if (clock.getElapsedTime() >= timePerMove) {
-			if(nbPlayers==2){
-				// Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
-				P1.update(window);
-				P2.update(window);
+        // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
+        if (clock.getElapsedTime() >= timePerMove) {
+            if (nbPlayers == 2) {
+                P1.update(window);
+                P2.update(window);
 
-				// Vérification des collisions entre les robots
-				P1.handleCollision(P2);
-				P2.handleCollision(P1);
-				}
-			else{
-				// Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
-				P1.update(window);
+                // Vérification des collisions entre les robots
+                P1.handleCollision(P2);
+                P2.handleCollision(P1);
+            } else {
+                P1.update(window);
 
-				// Vérification des collisions entre les robots
-				P1.handleCollision(P2);
-			}
+                // Vérification des collisions entre les robots
+                P1.handleCollision(P2);
+            }
             clock.restart();  // Redémarrer l'horloge après chaque mise à jour
         }
 
-		window.clear(sf::Color::Black);
-		window.draw(sprite);
+        // Dessiner l'arrière-plan
+        window.clear(sf::Color::Black);
+        window.draw(sprite);
         hexagon.drawHexagon(window, sf::Color::Red); 
         P1.draw(window);  // Dessiner le premier robot
-		if(nbPlayers==2) P2.draw(window);  // Dessiner le deuxième robot
+        if (nbPlayers == 2) P2.draw(window);  // Dessiner le deuxième robot
+
+        // Mettre à jour l'affichage
         window.display();
-		return true;
-		}
-	return false;
+    }
+    return false;
+}
+
+void Affiche::updateControls(Robot& robot) {
+    if (robot.getControlScheme() == 'A') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) robot.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) robot.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) robot.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) robot.rotateRight();
+    } else if (robot.getControlScheme() == 'B') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) robot.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) robot.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) robot.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) robot.rotateRight();
+    }
 }
