@@ -80,7 +80,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-			printf("granve");
+
             if (event.type == sf::Event::Closed) {
                 window.close();
 				fin=true;
