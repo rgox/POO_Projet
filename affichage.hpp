@@ -24,7 +24,7 @@ class Affiche {
 		};
 
 		
-		bool refresh(sf::RenderWindow& window, sf::Time timePerMove,sf::Clock clock,sf::Event event);//option close
+		bool refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event);
 		bool menu(sf::RenderWindow& window);
 		bool fin= false;
 	private:

@@ -134,7 +134,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
 }
 
 
-bool Affiche::refresh(sf::RenderWindow& window,sf::Time timePerMove,sf::Clock clock,sf::Event event){
+bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
         // Effacement de la fenêtre
         window.clear();
 		while(window.isOpen()){
