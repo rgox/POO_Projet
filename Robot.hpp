@@ -4,9 +4,11 @@
 #include <SFML/Graphics.hpp>
 #include "bonus.hpp"
 #include "arene.hpp"
+
 class Robot {
 public:
     // Constructeur
+	Robot();
     Robot(Hexagone& hex, float x, float y, int health, float speed, int attackPower, int defense, char controlScheme, sf::Color color);
 	
 	
