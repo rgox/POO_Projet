@@ -15,7 +15,9 @@ bool Affiche::menu(sf::RenderWindow& window) {
     title.setString("RobotVroomVromm");
     title.setCharacterSize(70);
     title.setFillColor(sf::Color::White);
-    title.setPosition(window.getSize().x/2-300,200);
+	title.setPosition(window.getSize().x/2-300,200);
+	sf::Text clonetitle(title);
+	clonetitle.setPosition(window.getSize().x/2-300,window.getSize().y-350);
 
     sf::Text singlePlayerOption;
     singlePlayerOption.setFont(font);
@@ -125,6 +127,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
         window.clear();
 		window.draw(sprite);
         window.draw(title);
+		window.draw(clonetitle);
 		window.draw(selectionRect);
 		window.draw(sprite1);
         window.draw(singlePlayerOption);
