@@ -15,7 +15,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
     title.setString("RobotVroomVromm");
     title.setCharacterSize(70);
     title.setFillColor(sf::Color::White);
-    title.setPosition(window.getSize().x/2-300,200);
+    title.setPosition(180, 50);
 
     sf::Text singlePlayerOption;
     singlePlayerOption.setFont(font);
@@ -125,6 +125,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
         window.clear();
 		window.draw(sprite);
         window.draw(title);
+		window.draw(clonetitle);
 		window.draw(selectionRect);
 		window.draw(sprite1);
         window.draw(singlePlayerOption);
@@ -172,6 +173,13 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		SpeedP1.setFillColor(sf::Color::Black);
 		SpeedP1.setPosition(100, 140);
 
+		sf::Text DefenseP1;
+    	DefenseP1.setFont(font);
+		DefenseP1.setString( std::to_string(P1.getDefense()) );
+		DefenseP1.setCharacterSize(50);
+		DefenseP1.setFillColor(sf::Color::Black);
+		DefenseP1.setPosition(100, 200);
+
 
 		//Joueur P2
 		sf::Text NomP2;
@@ -197,6 +205,13 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		SpeedP2.setFillColor(sf::Color::Black);
 		SpeedP2.setPosition(window.getSize().x-400, 140);
 
+		sf::Text DefenseP2;
+    	DefenseP2.setFont(font);
+		DefenseP2.setString( std::to_string(P2.getDefense()) );
+		DefenseP2.setCharacterSize(50);
+		DefenseP2.setFillColor(sf::Color::Black);
+		DefenseP2.setPosition(window.getSize().x-400, 200);
+
 		//Petit coeur
 		sf::Texture texture3;
 		if (!texture3.loadFromFile("life.png") ) {
@@ -209,8 +224,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
     	sprite3.setTextureRect(textureRect);
 		sprite3.setScale(0.6,0.6);
 		sf::Sprite cloneSprite3(sprite3);
-		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(60, 0));
-		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(60, 0));
+		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(80, 0));
+		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(80, 0));
 
 		//Petit logo de vitesse
 		sf::Texture texture4;
@@ -222,8 +237,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sprite4.setTexture(texture4);
 		sprite4.setScale(0.12,0.12);
 		sf::Sprite cloneSprite4(sprite4);
-		sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(110, 5));
-		cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(110, 5));
+		sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(140, 10));
+		cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(140, 10));
 
 
 		//######## Barres de Vie ##########
@@ -257,7 +272,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		// Définir la couleur du carré
 		batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
 
-
+	int initialHealth1=P1.getHealth();
+	int initialHealth2=P2.getHealth();
 
 		
 //################################################################################################################
@@ -282,14 +298,17 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
                 P2.handleCollision(P1);
 
 				//#####Adaptation des barres de vie en fonction des hp des joueurs########
-				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
-				batterie1.setPosition(5,35+(100-P1.getHealth()));
+				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth()/initialHealth1*100)));
+				batterie1.setPosition(5,35+(100-P1.getHealth()/initialHealth1*100));
 
-				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth())));
-				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()));
+				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
+				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
 
 				VieP1.setString(std::to_string(P1.getHealth()));
 				VieP2.setString(std::to_string(P2.getHealth()));
+
+				DefenseP1.setString( std::to_string(P1.getDefense()) );
+				DefenseP2.setString( std::to_string(P2.getDefense()) );
 
 				oss.str("");
 				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
@@ -308,10 +327,13 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
 				batterie1.setPosition(5,35+(100-P1.getHealth()));
 
-				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth())));
-				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()));
+				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
+				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
 
 				VieP1.setString(std::to_string(P1.getHealth()));
+
+				DefenseP1.setString( std::to_string(P1.getDefense()) );
+				DefenseP2.setString( std::to_string(P2.getDefense()) );
 
 				oss.str("");
 				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
@@ -343,7 +365,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		window.draw(VieP2);
 		window.draw(sprite3);
 		window.draw(cloneSprite3);
-
+		window.draw(DefenseP1);
+		window.draw(DefenseP2);
 		window.draw(SpeedP1);
 		window.draw(SpeedP2);
 		window.draw(sprite4);

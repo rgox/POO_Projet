@@ -9,7 +9,7 @@ class Robot {
 public:
     // Constructeur
 	Robot();
-    Robot(Hexagone& hex, float x, float y, int health, float speed, int attackPower, int defense, char controlScheme, sf::Color color);
+    Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color);
 	
 	
 	
@@ -51,6 +51,9 @@ public:
 	float getWidth() const {
 		return this->width;
 	}
+	int getDefense() const {
+		return this->defense;
+	}
 	float getHeight() const {
 		return this->height;
 	}
@@ -63,6 +66,8 @@ public:
 	void update(sf::RenderWindow& window);
 	void handleCollision(Robot& other);
 	void handleCollision(Bonus& other);
+
+	void correctPosition(sf::Vector2f& pos);
 
 	void draw(sf::RenderWindow& window);
 		sf::RectangleShape get_Shape(){
@@ -87,8 +92,8 @@ protected:
 
 	Hexagone& hexagon;
     sf::Vector2f position;
-    int health;       // Santé actuelle du robot
-    float speed;      // Vitesse de déplacement du robot
+    int health=10;       // Santé actuelle du robot
+    float speed=10;      // Vitesse de déplacement du robot
     int attackPower;  // Puissance d'attaque
     int defense;      // Capacité de défense
 	float lastPosX, lastPosY;
