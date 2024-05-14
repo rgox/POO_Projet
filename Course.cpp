@@ -16,7 +16,7 @@ void Course::draw(sf::RenderWindow& window) {
 	sprite1.setTexture(texture1);
 	sprite1.setScale(2, 2);
 	
-
+	sprite1.setOrigin(width/4,height/4);
 	sprite1.setPosition(position);
     sprite1.setRotation(orientation * 180 / M_PI);
     window.draw(sprite1);

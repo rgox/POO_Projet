@@ -235,10 +235,10 @@ bool Robot::canMove(float newX, float newY) {
 
 void Robot::drawDebugPoints(sf::RenderWindow& window) {
     // Calculer les positions des coins
-    sf::Vector2f topLeft = getTransformedPoint(0, 0 );
-    sf::Vector2f topRight = getTransformedPoint(width , 0);
-    sf::Vector2f bottomLeft = getTransformedPoint(0, height );
-    sf::Vector2f bottomRight = getTransformedPoint(width , height );
+    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
+    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
+    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
+    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
 
     // Créer des cercles pour chaque coin
     sf::CircleShape pointShape(2);
