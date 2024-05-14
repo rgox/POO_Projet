@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cmath>
+#include "geometry.hpp"
 
 
 class Hexagone {
@@ -35,6 +36,11 @@ public:
         }
         return sf::Vector2f(0, 0); // Retourne un point nul si l'index est hors limites
     }
+
+	std::vector<LineSegment> getHexagonSegments() const;
+
+	sf::Vector2f getCenter() const;
+	float getRadius() const;
 
 };
 

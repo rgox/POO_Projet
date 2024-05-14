@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "bonus.hpp"
-#include "arene.hpp"
 
 class Robot {
 public:
@@ -37,9 +36,21 @@ public:
 	void revertToLastPosition() {
         position.x = lastPosX;
         position.y = lastPosY;
+		rectangleShape.setPosition(position);
+    }
+	void saveLastOrientation() {
+        lastOrientation = orientation;
     }
 
-	void ensureInsideBoundary(sf::Vector2f& pos);
+    void revertToLastOrientation() {
+        orientation = lastOrientation;
+        rectangleShape.setRotation(orientation * 180 / M_PI);
+    }
+	void ensureInsideBoundary();
+	bool isInsideBoundary() const;
+	bool isTouchingBoundary() const;
+	void repositionToCenter();
+	bool checkCollision(const Robot& other) const;
 
 	bool canMove(float newX, float newY);
 
@@ -59,6 +70,7 @@ public:
 	}
 	float getOrientation() const { return orientation; }
 	char getControlScheme() const { return controlScheme; }  // Ajoutez ce getter
+	std::vector<LineSegment> getLineSegments() const;
 
 
     void setHealth(int newHealth);
@@ -94,7 +106,7 @@ protected:
     float speed=10;      // Vitesse de déplacement du robot
     int attackPower;  // Puissance d'attaque
     int defense;      // Capacité de défense
-	float lastPosX, lastPosY;
+	float lastPosX, lastPosY; 
 	sf::RectangleShape rectangleShape;
 	char controlScheme;  // 'A' pour les flèches, 'B' pour ZQSD
 	sf::Color color;
@@ -102,6 +114,7 @@ protected:
     float height = 30;  // Hauteur du robot, à adapter selon votre setup
 	sf::Vector2f lastValidPosition;
 	float orientation; // Angle en radians
+	float lastOrientation; // Sauvegarde de la dernière orientation
 };
 
 

@@ -21,9 +21,9 @@ int main() {
 	sf::Vector2f pos3 = hexagon.getPoint(3);
 
     Sniper snip(hexagon, pos1.x - 20, pos1.y - 15,  'A', sf::Color::Red);
-	snip.setPosition(500,500);
+	snip.setPosition(640,540);
     Tank robot2(hexagon, pos3.x - 20, pos3.y - 15,  'B', sf::Color::Blue);
-	robot2.setPosition(600,600);
+	robot2.setPosition(1280,540);
     Affiche aff(hexagon, snip, robot2);
     while (aff.menu(window)) {}
 
