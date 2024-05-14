@@ -4,8 +4,8 @@
 #include <cmath>
 
 // Constructeur
-Robot::Robot(Hexagone& hex, float x, float y, int health, float speed, int attackPower, int defense,char controlScheme, sf::Color color)
-    : hexagon(hex), position(x,y), health(health), speed(speed), attackPower(attackPower), defense(defense), controlScheme(controlScheme),orientation(0.0f){
+Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
+: hexagon(hex), position(x,y),  controlScheme(controlScheme),orientation(0.0f){
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
 		rectangleShape.setOutlineThickness(2);
@@ -204,15 +204,7 @@ void Robot::handleCollision(Bonus& bonus) {
 }
 
 
-
-void Robot::draw(sf::RenderWindow& window) {
-    rectangleShape.setPosition(position);
-    rectangleShape.setRotation(orientation * 180 / M_PI);
-    window.draw(rectangleShape);
-
-	// Dessiner les points de débogage
-    drawDebugPoints(window);
-}
+ void draw(sf::RenderWindow& window);
 
 sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
     float cosAngle = std::cos(orientation);
@@ -243,10 +235,10 @@ bool Robot::canMove(float newX, float newY) {
 
 void Robot::drawDebugPoints(sf::RenderWindow& window) {
     // Calculer les positions des coins
-    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
-    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
-    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
-    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
+    sf::Vector2f topLeft = getTransformedPoint(0, 0 );
+    sf::Vector2f topRight = getTransformedPoint(width , 0);
+    sf::Vector2f bottomLeft = getTransformedPoint(0, height );
+    sf::Vector2f bottomRight = getTransformedPoint(width , height );
 
     // Créer des cercles pour chaque coin
     sf::CircleShape pointShape(2);
