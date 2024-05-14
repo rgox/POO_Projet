@@ -1,16 +1,18 @@
 #include <algorithm>
 #include <cmath>
 #include "Robot.hpp"
+#include <cmath>
 
 // Constructeur
 Robot::Robot(Hexagone& hex, float x, float y, int health, float speed, int attackPower, int defense,char controlScheme, sf::Color color)
-    : hexagon(hex), position(x,y), health(health), speed(speed), attackPower(attackPower), defense(defense), controlScheme(controlScheme){
+    : hexagon(hex), position(x,y), health(health), speed(speed), attackPower(attackPower), defense(defense), controlScheme(controlScheme),orientation(0.0f){
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
 		rectangleShape.setOutlineThickness(2);
 		rectangleShape.setOutlineColor(color);
 		rectangleShape.setOrigin(width/2,height/2);
 		rectangleShape.setPosition(position);
+		rectangleShape.setRotation(orientation * 180 / M_PI); // Initialiser l'orientation
 		}
 
 // Destructeur
@@ -73,61 +75,97 @@ void Robot::moveRight() {
     }
 }
 
+void Robot::moveForward() {
+    float newX = position.x + speed * std::cos(orientation);
+    float newY = position.y + speed * std::sin(orientation);
+    if (canMove(newX, newY)) {
+        position.x = newX;
+        position.y = newY;
+        rectangleShape.setPosition(position);
+    }
+}
+
+void Robot::moveBackward() {
+    float newX = position.x - speed * std::cos(orientation);
+    float newY = position.y - speed * std::sin(orientation);
+    if (canMove(newX, newY)) {
+        position.x = newX;
+        position.y = newY;
+        rectangleShape.setPosition(position);
+    }
+}
+
+void Robot::rotateLeft() {
+    orientation -= 0.1f; // Ajuster cette valeur pour la vitesse de rotation
+    rectangleShape.setRotation(orientation * 180 / M_PI);
+}
+
+void Robot::rotateRight() {
+    orientation += 0.1f; // Ajuster cette valeur pour la vitesse de rotation
+    rectangleShape.setRotation(orientation * 180 / M_PI);
+}
+
 void Robot::update(sf::RenderWindow& window) {
-	saveLastPosition();
+    saveLastPosition();
     if (controlScheme == 'A') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) moveUp();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) moveDown();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) moveLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) moveRight();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) rotateRight();
     } else if (controlScheme == 'B') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) moveUp();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveDown();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) moveLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveRight();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) rotateRight();
     }
 }
 
 void Robot::handleCollision(Robot& other) {
-    if (this->getX() < other.getX() + width && this->getX() + width > other.getX() &&
-        this->getY() < other.getY() + height && this->getY() + height > other.getY()) {
-
-        // Calculate the direction of recoil
+    if (rectangleShape.getGlobalBounds().intersects(other.rectangleShape.getGlobalBounds())) {
+        // Calculer la direction de recul basée sur l'orientation des robots
         float deltaX = position.x - other.position.x;
         float deltaY = position.y - other.position.y;
         float distance = std::sqrt(deltaX * deltaX + deltaY * deltaY);
 
-        // Normalize the recoil vector
+        // Normaliser le vecteur de recul
         if (distance != 0) {
             deltaX /= distance;
             deltaY /= distance;
         }
 
-        // Apply a slight recoil
-        float recoil = 5.0f; // You may adjust this parameter based on needs
+        // Appliquer un léger recul
+        float recoil = 5.0f; // Vous pouvez ajuster ce paramètre selon les besoins
         position.x += deltaX * recoil;
         position.y += deltaY * recoil;
         other.position.x -= deltaX * recoil;
         other.position.y -= deltaY * recoil;
 
-        // Ensure both robots remain inside the hexagon
-		if(!canMove(position.x,position.y)) revertToLastPosition();
-		if(!canMove(other.position.x,other.position.y)) other.revertToLastPosition();
-
-        /*ensureInsideBoundary(position);
-        ensureInsideBoundary(other.position);*/
+        // Assurer que les deux robots restent à l'intérieur de l'hexagone
+        ensureInsideBoundary(position);
+        ensureInsideBoundary(other.position);
     }
 }
 
 void Robot::ensureInsideBoundary(sf::Vector2f& pos) {
-    // Check all corners of the robot's bounding box
-    if (!hexagon.isInside(pos.x, pos.y) ||
-        !hexagon.isInside(pos.x + width, pos.y) ||
-        !hexagon.isInside(pos.x, pos.y + height) ||
-        !hexagon.isInside(pos.x + width, pos.y + height)) {
+	const float margin = 5.0f; // Marge de sécurité en pixels
+
+    // Vérifier toutes les coins du rectangle avec l'orientation
+    sf::Transform transform;
+    transform.rotate(orientation * 180 / M_PI, pos);
+
+    sf::Vector2f topLeft = transform.transformPoint(sf::Vector2f(pos.x, pos.y));
+    sf::Vector2f topRight = transform.transformPoint(sf::Vector2f(pos.x + width, pos.y));
+    sf::Vector2f bottomLeft = transform.transformPoint(sf::Vector2f(pos.x, pos.y + height));
+    sf::Vector2f bottomRight = transform.transformPoint(sf::Vector2f(pos.x + width, pos.y + height));
+
+    if (!hexagon.isInside(topLeft.x - margin, topLeft.y - margin) ||
+        !hexagon.isInside(topRight.x + margin, topRight.y - margin) ||
+        !hexagon.isInside(bottomLeft.x - margin, bottomLeft.y + margin) ||
+        !hexagon.isInside(bottomRight.x + margin, bottomRight.y + margin)) {
         revertToLastPosition();
     }
 }
+
 
 void Robot::handleCollision(Bonus& bonus) {
 
@@ -168,20 +206,61 @@ void Robot::handleCollision(Bonus& bonus) {
 
 
 void Robot::draw(sf::RenderWindow& window) {
-    sf::RectangleShape shape(sf::Vector2f(width, height));
-    shape.setPosition(position.x, position.y);
-    shape.setFillColor(color);  // La couleur pourrait aussi être un attribut de Robot
-    window.draw(shape);
+    rectangleShape.setPosition(position);
+    rectangleShape.setRotation(orientation * 180 / M_PI);
+    window.draw(rectangleShape);
+
+	// Dessiner les points de débogage
+    drawDebugPoints(window);
+}
+
+sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
+    float cosAngle = std::cos(orientation);
+    float sinAngle = std::sin(orientation);
+
+    // Appliquer la rotation à l'offset
+    float x = position.x + offsetX * cosAngle - offsetY * sinAngle;
+    float y = position.y + offsetX * sinAngle + offsetY * cosAngle;
+
+    return sf::Vector2f(x, y);
 }
 
 bool Robot::canMove(float newX, float newY) {
-    sf::Vector2f newTopLeft(newX, newY);
-    sf::Vector2f newTopRight(newX + width, newY );
-    sf::Vector2f newBottomLeft(newX, newY + height);
-    sf::Vector2f newBottomRight(newX + width, newY + height);
+    const float margin = 1.0f; // Marge de sécurité en pixels
 
-    return hexagon.isInside(newTopLeft.x, newTopLeft.y) &&
-           hexagon.isInside(newTopRight.x, newTopRight.y) &&
-           hexagon.isInside(newBottomLeft.x, newBottomLeft.y) &&
-           hexagon.isInside(newBottomRight.x, newBottomRight.y);
+    // Calculer les positions des coins après le déplacement
+    sf::Vector2f newTopLeft = getTransformedPoint(- width / 2, - height / 2);
+    sf::Vector2f newTopRight = getTransformedPoint(width / 2, - height / 2);
+    sf::Vector2f newBottomLeft = getTransformedPoint(- width / 2, height / 2);
+    sf::Vector2f newBottomRight = getTransformedPoint(width / 2, height / 2);
+
+    // Vérifier si tous les coins sont à l'intérieur de l'hexagone avec une marge de sécurité
+    return hexagon.isInside(newTopLeft.x - margin, newTopLeft.y - margin) &&
+           hexagon.isInside(newTopRight.x + margin, newTopRight.y - margin) &&
+           hexagon.isInside(newBottomLeft.x - margin, newBottomLeft.y + margin) &&
+           hexagon.isInside(newBottomRight.x + margin, newBottomRight.y + margin);
+}
+
+void Robot::drawDebugPoints(sf::RenderWindow& window) {
+    // Calculer les positions des coins
+    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
+    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
+    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
+    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
+
+    // Créer des cercles pour chaque coin
+    sf::CircleShape pointShape(2);
+    pointShape.setFillColor(sf::Color::Green);
+
+    pointShape.setPosition(topLeft);
+    window.draw(pointShape);
+
+    pointShape.setPosition(topRight);
+    window.draw(pointShape);
+
+    pointShape.setPosition(bottomLeft);
+    window.draw(pointShape);
+
+    pointShape.setPosition(bottomRight);
+    window.draw(pointShape);
 }

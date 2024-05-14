@@ -137,8 +137,8 @@ bool Affiche::menu(sf::RenderWindow& window) {
 
 
 bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
-        // Effacement de la fenêtre
-        window.clear();
+    // Effacement de la fenêtre
+    window.clear();
 
 		//######## Infos des joueurs ##########
 
@@ -268,23 +268,24 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		
 //################################################################################################################
 
-		while(window.isOpen()){
-        // Dessin de l'arrière-plan
-		while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
+    
+    while (window.isOpen()) {
+        // Gestion des événements
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
+            }
         }
 
-		if (clock.getElapsedTime() >= timePerMove) {
-			if(nbPlayers==2){
-				// Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
-				P1.update(window);
-				P2.update(window);
+        // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
+        if (clock.getElapsedTime() >= timePerMove) {
+            if (nbPlayers == 2) {
+                P1.update(window);
+                P2.update(window);
 
-				// Vérification des collisions entre les robots
-				P1.handleCollision(P2);
-				P2.handleCollision(P1);
+                // Vérification des collisions entre les robots
+                P1.handleCollision(P2);
+                P2.handleCollision(P1);
 
 				//#####Adaptation des barres de vie en fonction des hp des joueurs########
 				batterie1.setSize(sf::Vector2f(35, 85-(100-P1.getHealth())));
@@ -304,13 +305,11 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 				oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
 				SpeedP2.setString(oss.str());
 						
-				}
-			else{
-				// Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
-				P1.update(window);
+            } else {
+                P1.update(window);
 
-				// Vérification des collisions entre les robots
-				P1.handleCollision(P2);
+                // Vérification des collisions entre les robots
+                P1.handleCollision(P2);
 
 				batterie1.setSize(sf::Vector2f(35, 85-(100-P1.getHealth())));
 				batterie1.setPosition(5,20+(100-P1.getHealth()));
@@ -320,7 +319,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 				oss.str("");
 				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
 				SpeedP1.setString(oss.str());
-			}
+            }
             clock.restart();  // Redémarrer l'horloge après chaque mise à jour
         }
 		// Définir le rectangle source dans la texture de l'image
@@ -355,4 +354,18 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		}
 
 	return false	  ;
+}
+
+void Affiche::updateControls(Robot& robot) {
+    if (robot.getControlScheme() == 'A') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) robot.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) robot.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) robot.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) robot.rotateRight();
+    } else if (robot.getControlScheme() == 'B') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) robot.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) robot.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) robot.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) robot.rotateRight();
+    }
 }
