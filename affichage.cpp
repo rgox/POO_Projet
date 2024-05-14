@@ -3,6 +3,7 @@
 #include <sstream> // Inclure la bibliothèque pour std::ostringstream
 
 bool Affiche::menu(sf::RenderWindow& window) {
+	
     sf::Font font;
     if (!font.loadFromFile("Ecriture.ttf")) {
         // Gestion de l'erreur si le chargement de la police échoue
@@ -12,30 +13,30 @@ bool Affiche::menu(sf::RenderWindow& window) {
     sf::Text title;
     title.setFont(font);
     title.setString("RobotVroomVromm");
-    title.setCharacterSize(40);
+    title.setCharacterSize(70);
     title.setFillColor(sf::Color::White);
-    title.setPosition(230, 50);
+    title.setPosition(window.getSize().x/2-300,200);
 
     sf::Text singlePlayerOption;
     singlePlayerOption.setFont(font);
     singlePlayerOption.setString("Jouer tout seul");
     singlePlayerOption.setCharacterSize(20);
     singlePlayerOption.setFillColor(sf::Color::White);
-    singlePlayerOption.setPosition(350, 200);
+    singlePlayerOption.setPosition(window.getSize().x/2-50, window.getSize().y/2-100);
 
     sf::Text multiPlayerOption;
     multiPlayerOption.setFont(font);
     multiPlayerOption.setString("Jouer a deux joueurs");
     multiPlayerOption.setCharacterSize(20);
     multiPlayerOption.setFillColor(sf::Color::White);
-    multiPlayerOption.setPosition(325, 250);
+    multiPlayerOption.setPosition(window.getSize().x/2-75, window.getSize().y/2-50);
 
     sf::Text goButton;
     goButton.setFont(font);
     goButton.setString("Go !");
     goButton.setCharacterSize(25);
     goButton.setFillColor(sf::Color::White);
-    goButton.setPosition(400, 350);
+    goButton.setPosition(window.getSize().x/2, window.getSize().y/2+20);
 
 	// Rectangle vert pour encadrer l'option sélectionnée
     sf::RectangleShape selectionRect(sf::Vector2f(singlePlayerOption.getLocalBounds().width + 60, singlePlayerOption.getLocalBounds().height + 20));
@@ -111,7 +112,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
         }
 		// Affichage de l'image actuelle
         sprite.setTexture(frames[currentFrame]);
-		sprite.setScale(1.4,2);
+		sprite.setScale((window.getSize().x)/480,(window.getSize().y)/300);
 
 		// Avancer au prochain frame toutes les 100 millisecondes (10 images par seconde)
         if (clock.getElapsedTime().asMilliseconds() >= 100) {
@@ -151,50 +152,50 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sf::Text NomP1;
     	NomP1.setFont(font);
 		NomP1.setString("Enbrrr");
-		NomP1.setCharacterSize(20);
+		NomP1.setCharacterSize(70);
 		NomP1.setFillColor(sf::Color::Black);
-		NomP1.setPosition(60, 10);
+		NomP1.setPosition(100, 10);
 
 		sf::Text VieP1;
     	VieP1.setFont(font);
 		VieP1.setString( std::to_string(P1.getHealth()) );
-		VieP1.setCharacterSize(20);
+		VieP1.setCharacterSize(50);
 		VieP1.setFillColor(sf::Color::Black);
-		VieP1.setPosition(60, 30);
+		VieP1.setPosition(100, 80);
 
 		sf::Text SpeedP1;
     	SpeedP1.setFont(font);
 		std::ostringstream oss;
 		oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
 		SpeedP1.setString(oss.str());
-		SpeedP1.setCharacterSize(20);
+		SpeedP1.setCharacterSize(50);
 		SpeedP1.setFillColor(sf::Color::Black);
-		SpeedP1.setPosition(60, 50);
+		SpeedP1.setPosition(100, 140);
 
 
 		//Joueur P2
 		sf::Text NomP2;
     	NomP2.setFont(font);
 		NomP2.setString("Hassoul");
-		NomP2.setCharacterSize(20);
+		NomP2.setCharacterSize(70);
 		NomP2.setFillColor(sf::Color::Black);
-		NomP2.setPosition(650, 10);
+		NomP2.setPosition(window.getSize().x-400, 10);
 
 		sf::Text VieP2;
     	VieP2.setFont(font);
 		VieP2.setString(std::to_string(P2.getHealth()));
-		VieP2.setCharacterSize(20);
+		VieP2.setCharacterSize(50);
 		VieP2.setFillColor(sf::Color::Black);
-		VieP2.setPosition(650, 30);
+		VieP2.setPosition(window.getSize().x-400, 80);
 
 		sf::Text SpeedP2;
     	SpeedP2.setFont(font);
 		oss.str("");
 		oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
 		SpeedP2.setString(oss.str());
-		SpeedP2.setCharacterSize(20);
+		SpeedP2.setCharacterSize(50);
 		SpeedP2.setFillColor(sf::Color::Black);
-		SpeedP2.setPosition(650, 50);
+		SpeedP2.setPosition(window.getSize().x-400, 140);
 
 		//Petit coeur
 		sf::Texture texture3;
@@ -206,10 +207,10 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sprite3.setTexture(texture3);
 		sf::IntRect textureRect(0, 0, 120, 100); 
     	sprite3.setTextureRect(textureRect);
-		sprite3.setScale(0.25,0.25);
+		sprite3.setScale(0.6,0.6);
 		sf::Sprite cloneSprite3(sprite3);
-		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(30, 0));
-		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(30, 0));
+		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(60, 0));
+		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(60, 0));
 
 		//Petit logo de vitesse
 		sf::Texture texture4;
@@ -219,10 +220,10 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		}
 		sf::Sprite sprite4;
 		sprite4.setTexture(texture4);
-		sprite4.setScale(0.0525,0.0525);
+		sprite4.setScale(0.12,0.12);
 		sf::Sprite cloneSprite4(sprite4);
-		sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(50, 3));
-		cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(50, 3));
+		sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(110, 5));
+		cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(110, 5));
 
 
 		//######## Barres de Vie ##########
@@ -234,31 +235,24 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		}
 		sf::Sprite sprite1;
 		sprite1.setTexture(texture);
+		sprite1.setScale(0.15, 0.2);
+		sf::Sprite cloneSprite1(sprite1);
 		sprite1.setPosition(3,10);
-
+		cloneSprite1.setPosition(window.getSize().x-100,10);
 		// Créer un rectangle shape
-    	sf::RectangleShape batterie1(sf::Vector2f(35, 85)); // Définir la taille du carré (largeur x hauteur)
+    	sf::RectangleShape batterie1(sf::Vector2f(150, 150)); // Définir la taille du carré (largeur x hauteur)
     
     	// Définir la position du carré
-		batterie1.setPosition(5, 20); // Coordonnées x et y du coin supérieur gauche du carré
+		batterie1.setPosition(5, 35); // Coordonnées x et y du coin supérieur gauche du carré
 		
 		// Définir la couleur du carré
 		batterie1.setFillColor(sf::Color::Green); // Choisir une couleur, ici bleu
 
-
-		sf::Texture texture2;
-		if (!texture2.loadFromFile("batterie.png") ) {
-			// Gestion de l'erreur si le chargement de la texture échoue
-			return EXIT_FAILURE;
-		}
-		sf::Sprite sprite2;
-		sprite2.setTexture(texture);
-		sprite2.setPosition(750,10);
 		// Créer un rectangle shape
     	sf::RectangleShape batterie2(sf::Vector2f(35, 85)); // Définir la taille du carré (largeur x hauteur)
     
     // Définir la position deu carré
-		batterie2.setPosition(750, 20); // Coordonnées x et y du coin supérieur gauche du carré
+		batterie2.setPosition(window.getSize().x-100, 35); // Coordonnées x et y du coin supérieur gauche du carré
 		
 		// Définir la couleur du carré
 		batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
@@ -288,11 +282,11 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
                 P2.handleCollision(P1);
 
 				//#####Adaptation des barres de vie en fonction des hp des joueurs########
-				batterie1.setSize(sf::Vector2f(35, 85-(100-P1.getHealth())));
-				batterie1.setPosition(5,20+(100-P1.getHealth()));
+				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
+				batterie1.setPosition(5,35+(100-P1.getHealth()));
 
-				batterie2.setSize(sf::Vector2f(35, 85-(100-P2.getHealth())));
-				batterie2.setPosition(750,20+(100-P2.getHealth()));
+				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth())));
+				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()));
 
 				VieP1.setString(std::to_string(P1.getHealth()));
 				VieP2.setString(std::to_string(P2.getHealth()));
@@ -311,8 +305,11 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
                 // Vérification des collisions entre les robots
                 P1.handleCollision(P2);
 
-				batterie1.setSize(sf::Vector2f(35, 85-(100-P1.getHealth())));
-				batterie1.setPosition(5,20+(100-P1.getHealth()));
+				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
+				batterie1.setPosition(5,35+(100-P1.getHealth()));
+
+				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth())));
+				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()));
 
 				VieP1.setString(std::to_string(P1.getHealth()));
 
@@ -325,8 +322,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		// Définir le rectangle source dans la texture de l'image
 		
 		
-		sprite2.setScale(0.0625, 0.1);
-		sprite1.setScale(0.0625, 0.1);
+		
+		
 		window.clear(sf::Color::White);
 		
         hexagon.drawHexagon(window, sf::Color::Red); 
@@ -334,9 +331,11 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		if(nbPlayers==2) P2.draw(window);  // Dessiner le deuxième robot
 		window.draw(batterie1);
         window.draw(sprite1);
-		
+
 		window.draw(batterie2);
-		window.draw(sprite2);
+
+		window.draw(cloneSprite1);
+		
 		window.draw(NomP1);
 		window.draw(NomP2);
 
