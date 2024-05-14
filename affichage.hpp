@@ -27,6 +27,11 @@ class Affiche {
 		bool refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event);
 		bool menu(sf::RenderWindow& window);
 		bool fin= false;
+
+	
+    	void updateControls(Robot& robot);
+		int getNbPlayers() const { return nbPlayers; }
+
 	private:
 		Hexagone& hexagon;
     	Robot& P1;

@@ -22,6 +22,11 @@ public:
     void moveLeft();
     void moveRight();
 
+	void moveForward();
+	void moveBackward();
+	void rotateLeft();
+	void rotateRight();
+
 	void setPosition(float x, float y);
 
 	void saveLastPosition() {
@@ -49,14 +54,15 @@ public:
 	float getHeight() const {
 		return this->height;
 	}
+	float getOrientation() const { return orientation; }
+	char getControlScheme() const { return controlScheme; }  // Ajoutez ce getter
+
 
     void setHealth(int newHealth);
 
 	void update(sf::RenderWindow& window);
 	void handleCollision(Robot& other);
 	void handleCollision(Bonus& other);
-
-	void correctPosition(sf::Vector2f& pos);
 
 	void draw(sf::RenderWindow& window);
 		sf::RectangleShape get_Shape(){
@@ -69,21 +75,13 @@ public:
         }
     }
 
-	void drawDebug(sf::RenderWindow& window) {
-		sf::CircleShape marker(1);
-		marker.setFillColor(sf::Color::Red);
-		marker.setPosition(position.x, position.y);
-		window.draw(marker);
-		marker.setPosition(position.x + width-1, position.y );
-		window.draw(marker);
-		marker.setPosition(position.x , position.y + height-1);
-		window.draw(marker);
-		marker.setPosition(position.x + width-1, position.y + height-1);
-		window.draw(marker);
-}
+	sf::Vector2f getTransformedPoint(float offsetX, float offsetY) const;
 
+	// Nouvelle méthode pour dessiner les points de débogage
+    void drawDebugPoints(sf::RenderWindow& window);
 
-
+	void correctPosition();
+	bool isInsideBoundary();
 
 protected:
 
@@ -100,6 +98,7 @@ protected:
 	float width = 40;   // Largeur du robot, à adapter selon votre setup
     float height = 30;  // Hauteur du robot, à adapter selon votre setup
 	sf::Vector2f lastValidPosition;
+	float orientation; // Angle en radians
 };
 
 
