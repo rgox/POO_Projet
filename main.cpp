@@ -20,19 +20,17 @@ int main() {
 	sf::Vector2f pos1 = hexagon.getPoint(0);
 	sf::Vector2f pos3 = hexagon.getPoint(3);
 
-    Sniper snip(hexagon, pos1.x - 20, pos1.y - 15,  'A', sf::Color::Red);
-	snip.setPosition(500,500);
-    Tank robot2(hexagon, pos3.x - 20, pos3.y - 15,  'B', sf::Color::Blue);
-	robot2.setPosition(600,600);
-    Affiche aff(hexagon, snip, robot2);
+    Robot* rob1;
+    Robot* robot2;
+	std::cout << hexagon.getPoint(0).x << std::endl;
+    Affiche aff(hexagon,rob1,robot2);
     while (aff.menu(window)) {}
 
     if (!aff.fin) {
+		while(aff.choose(window)){}
         while (aff.refresh(window, timePerMove, clock, event)) {
-            aff.updateControls(snip);
-            if (aff.getNbPlayers() == 2) {
-                aff.updateControls(robot2);
-            }
+            aff.updateControls();
+            
         }
     }
 

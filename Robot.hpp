@@ -9,8 +9,10 @@ class Robot {
 public:
     // Constructeur
 	Robot();
-    Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color);
+    Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color);
 	
+	Robot& operator=(Robot* other);
+
 	
 	
     // Destructeur
@@ -64,8 +66,8 @@ public:
     void setHealth(int newHealth);
 
 	void update(sf::RenderWindow& window);
-	void handleCollision(Robot& other);
-	void handleCollision(Bonus& other);
+	void handleCollision(Robot* other);
+	void handleCollision(Bonus* other);
 
 	void correctPosition(sf::Vector2f& pos);
 

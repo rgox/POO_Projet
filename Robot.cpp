@@ -4,7 +4,32 @@
 #include <cmath>
 
 // Constructeur
-Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
+Robot::Robot()
+:hexagon(Hexagone::defaultInstance),
+    position(0, 0), // Initialisez la position à (0, 0) par défaut
+    health(10), // Initialisez health avec une valeur par défaut de 10
+    speed(10), // Initialisez speed avec une valeur par défaut de 10
+    attackPower(/* initialiser avec une valeur par défaut */),
+    defense(/* initialiser avec une valeur par défaut */),
+    lastPosX(0), // Initialisez lastPosX à 0 par défaut
+    lastPosY(0), // Initialisez lastPosY à 0 par défaut
+    rectangleShape(/* initialiser avec les valeurs par défaut appropriées */),
+    controlScheme(/* initialiser avec une valeur par défaut */),
+    color(/* initialiser avec une valeur par défaut */),
+    width(40), // Initialisez width avec une valeur par défaut de 40
+    height(30), // Initialisez height avec une valeur par défaut de 30
+    lastValidPosition(0, 0), // Initialisez lastValidPosition à (0, 0) par défaut
+    orientation(0) // Initialisez orientation à 0 par défaut
+{
+	rectangleShape.setSize(sf::Vector2f(width, height));
+	rectangleShape.setFillColor(color);
+	rectangleShape.setOutlineThickness(2);
+	rectangleShape.setOutlineColor(color);
+	rectangleShape.setOrigin(width/2,height/2);
+	rectangleShape.setPosition(position);
+	rectangleShape.setRotation(orientation * 180 / M_PI); // Initialiser l'orientation
+}
+Robot::Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color)
 : hexagon(hex), position(x,y),  controlScheme(controlScheme),orientation(0.0f){
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
@@ -18,7 +43,28 @@ Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color colo
 // Destructeur
 
 Robot::~Robot() {}
-
+Robot& Robot::operator=( Robot* other) {
+    if (this != other) {
+        //On copie chaque attribut de l'objet passé en argument
+		hexagon=other->hexagon;
+    	position=other->position;
+    	health=other->health;       // Santé actuelle du robot
+    	speed=other->speed;      // Vitesse de déplacement du robot
+    	attackPower=other->attackPower;  // Puissance d'attaque
+    	defense=other->defense;      // Capacité de défense
+		lastPosX=other->lastPosX;
+		lastPosY=other->lastPosY;
+		rectangleShape=other->rectangleShape;
+		controlScheme=other->controlScheme;  // 'A' pour les flèches, 'B' pour ZQSD
+		color=other->color;
+		width = other->width;   // Largeur du robot, à adapter selon votre setup
+    	height = other->height;  // Hauteur du robot, à adapter selon votre setup
+		lastValidPosition=other->lastValidPosition;
+		orientation=other->orientation; // Angle en radians
+        
+    }
+    return *this;
+}
 void Robot::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
@@ -120,11 +166,11 @@ void Robot::update(sf::RenderWindow& window) {
     }
 }
 
-void Robot::handleCollision(Robot& other) {
-    if (rectangleShape.getGlobalBounds().intersects(other.rectangleShape.getGlobalBounds())) {
+void Robot::handleCollision(Robot* other) {
+    if (rectangleShape.getGlobalBounds().intersects(other->rectangleShape.getGlobalBounds())) {
         // Calculer la direction de recul basée sur l'orientation des robots
-        float deltaX = position.x - other.position.x;
-        float deltaY = position.y - other.position.y;
+        float deltaX = position.x - other->position.x;
+        float deltaY = position.y - other->position.y;
         float distance = std::sqrt(deltaX * deltaX + deltaY * deltaY);
 
         // Normaliser le vecteur de recul
@@ -137,12 +183,12 @@ void Robot::handleCollision(Robot& other) {
         float recoil = 5.0f; // Vous pouvez ajuster ce paramètre selon les besoins
         position.x += deltaX * recoil;
         position.y += deltaY * recoil;
-        other.position.x -= deltaX * recoil;
-        other.position.y -= deltaY * recoil;
+        other->position.x -= deltaX * recoil;
+        other->position.y -= deltaY * recoil;
 
         // Assurer que les deux robots restent à l'intérieur de l'hexagone
         ensureInsideBoundary(position);
-        ensureInsideBoundary(other.position);
+        ensureInsideBoundary(other->position);
     }
 }
 
@@ -167,33 +213,33 @@ void Robot::ensureInsideBoundary(sf::Vector2f& pos) {
 }
 
 
-void Robot::handleCollision(Bonus& bonus) {
+void Robot::handleCollision(Bonus* bonus) {
 
     // Obtenir les limites globales des formes
     sf::FloatRect robotBounds = get_Shape().getGlobalBounds();
     sf::FloatRect bonusBounds;
 
-    if (bonus.get_shape() == "circle") {
+    if (bonus->get_shape() == "circle") {
         // Obtenir les limites globales du cercle
-        sf::FloatRect circleBounds = bonus.get_circleShape().getGlobalBounds();
+        sf::FloatRect circleBounds = bonus->get_circleShape().getGlobalBounds();
 
         // Vérifier la collision entre le robot et le cercle
         if (robotBounds.intersects(circleBounds)) {
             revertToLastPosition(); // Revenir à la dernière position sûre
             // Autres actions à effectuer en cas de collision avec un cercle
         }
-    } else if (bonus.get_shape() == "rectangle") {
+    } else if (bonus->get_shape() == "rectangle") {
         // Obtenir les limites globales du rectangle
-        sf::FloatRect rectangleBounds = bonus.get_rectangleShape().getGlobalBounds();
+        sf::FloatRect rectangleBounds = bonus->get_rectangleShape().getGlobalBounds();
 
         // Vérifier la collision entre le robot et le rectangle
         if (robotBounds.intersects(rectangleBounds)) {
             revertToLastPosition(); // Revenir à la dernière position sûre
             // Autres actions à effectuer en cas de collision avec un rectangle
         }
-    } else if (bonus.get_shape() == "triangle") {
+    } else if (bonus->get_shape() == "triangle") {
         // Obtenir les limites globales du triangle
-        sf::FloatRect triangleBounds = bonus.get_triangleShape().getGlobalBounds();
+        sf::FloatRect triangleBounds = bonus->get_triangleShape().getGlobalBounds();
 
         // Vérifier la collision entre le robot et le triangle
         if (robotBounds.intersects(triangleBounds)) {

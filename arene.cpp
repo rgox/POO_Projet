@@ -5,6 +5,24 @@
 
 
 
+// Définition de l'instance par défaut
+Hexagone::Hexagone() {
+    float windowWidth = 1920;
+    float windowHeight = 1080;
+    float radius = std::min(windowWidth, windowHeight) * 0.5f; // 50% of the smallest dimension
+    float centerX = windowWidth / 2.0f;
+    float centerY = windowHeight / 2.0f;
+
+    for (int i = 0; i < 6; ++i) {
+        points[i].x = centerX + radius * cos(i * 2 * M_PI / 6);
+        points[i].y = centerY + radius * sin(i * 2 * M_PI / 6);
+    }
+    points[6] = points[0]; // Close the hexagon
+}
+
+// Définition de l'instance par défaut
+Hexagone Hexagone::defaultInstance;
+
 bool Hexagone::isInside(float x, float y) const {
     int crossings = 0;
     for (size_t i = 0; i < 6; ++i) {
