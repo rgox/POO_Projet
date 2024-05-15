@@ -140,7 +140,7 @@ bool Affiche::menu(sf::RenderWindow& window) {
 }
 
 
-bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
+bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event,Robot& P1, Robot& P2) {
     	// Effacement de la fenêtre
     	window.clear();
 
@@ -153,8 +153,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		}
 		//Joueur P1
 
-		P1->setPosition(window.getSize().x/2-100,window.getSize().y/2);
-		P2->setPosition(window.getSize().x/2+100,window.getSize().y/2);
+		P1.setPosition(window.getSize().x/2-100,window.getSize().y/2);
+		P2.setPosition(window.getSize().x/2+100,window.getSize().y/2);
 
 		sf::Text NomP1;
     	NomP1.setFont(font);
@@ -165,7 +165,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 		sf::Text VieP1;
     	VieP1.setFont(font);
-		VieP1.setString( std::to_string(P1->getHealth()) );
+		VieP1.setString( std::to_string(P1.getHealth()) );
 		VieP1.setCharacterSize(50);
 		VieP1.setFillColor(sf::Color::Black);
 		VieP1.setPosition(100, 80);
@@ -173,7 +173,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sf::Text SpeedP1;
     	SpeedP1.setFont(font);
 		std::ostringstream oss;
-		oss << std::fixed << std::setprecision(2) << P1->getSpeed(); // Limite à 2 chiffres après la virgule
+		oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
 		SpeedP1.setString(oss.str());
 		SpeedP1.setCharacterSize(50);
 		SpeedP1.setFillColor(sf::Color::Black);
@@ -181,7 +181,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 		sf::Text DefenseP1;
     	DefenseP1.setFont(font);
-		DefenseP1.setString( std::to_string(P1->getDefense()) );
+		DefenseP1.setString( std::to_string(P1.getDefense()) );
 		DefenseP1.setCharacterSize(50);
 		DefenseP1.setFillColor(sf::Color::Black);
 		DefenseP1.setPosition(100, 200);
@@ -197,7 +197,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 		sf::Text VieP2;
     	VieP2.setFont(font);
-		VieP2.setString(std::to_string(P2->getHealth()));
+		VieP2.setString(std::to_string(P2.getHealth()));
 		VieP2.setCharacterSize(50);
 		VieP2.setFillColor(sf::Color::Black);
 		VieP2.setPosition(window.getSize().x-400, 80);
@@ -205,7 +205,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sf::Text SpeedP2;
     	SpeedP2.setFont(font);
 		oss.str("");
-		oss << std::fixed << std::setprecision(2) << P2->getSpeed(); // Limite à 2 chiffres après la virgule
+		oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
 		SpeedP2.setString(oss.str());
 		SpeedP2.setCharacterSize(50);
 		SpeedP2.setFillColor(sf::Color::Black);
@@ -213,7 +213,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 		sf::Text DefenseP2;
     	DefenseP2.setFont(font);
-		DefenseP2.setString( std::to_string(P2->getDefense()) );
+		DefenseP2.setString( std::to_string(P2.getDefense()) );
 		DefenseP2.setCharacterSize(50);
 		DefenseP2.setFillColor(sf::Color::Black);
 		DefenseP2.setPosition(window.getSize().x-400, 200);
@@ -292,8 +292,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		// Définir la couleur du carré
 		batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
 
-	int initialHealth1=P1->getHealth();
-	int initialHealth2=P2->getHealth();
+	int initialHealth1=P1.getHealth();
+	int initialHealth2=P2.getHealth();
 
 		
 //################################################################################################################
@@ -310,53 +310,53 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
         // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
         if (clock.getElapsedTime() >= timePerMove) {
             if (nbPlayers == 2) {
-                P1->update(window);
-                P2->update(window);
+                P1.update(window);
+                P2.update(window);
 
                 // Vérification des collisions entre les robots
-                P1->handleCollision(P2);
-                P2->handleCollision(P1);
+                P1.handleCollision(P2);
+                P2.handleCollision(P1);
 
 				//#####Adaptation des barres de vie en fonction des hp des joueurs########
-				batterie1.setSize(sf::Vector2f(80, 160-(100-P1->getHealth()/initialHealth1*100)));
-				batterie1.setPosition(5,35+(100-P1->getHealth()/initialHealth1*100));
+				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth()/initialHealth1*100)));
+				batterie1.setPosition(5,35+(100-P1.getHealth()/initialHealth1*100));
 
-				batterie2.setSize(sf::Vector2f(80, 160-(100-P2->getHealth()/initialHealth2*100)));
-				batterie2.setPosition(window.getSize().x-95,35+(100-P2->getHealth()/initialHealth2*100));
+				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
+				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
 
-				VieP1.setString(std::to_string(P1->getHealth()));
-				VieP2.setString(std::to_string(P2->getHealth()));
+				VieP1.setString(std::to_string(P1.getHealth()));
+				VieP2.setString(std::to_string(P2.getHealth()));
 
-				DefenseP1.setString( std::to_string(P1->getDefense()) );
-				DefenseP2.setString( std::to_string(P2->getDefense()) );
+				DefenseP1.setString( std::to_string(P1.getDefense()) );
+				DefenseP2.setString( std::to_string(P2.getDefense()) );
 
 				oss.str("");
-				oss << std::fixed << std::setprecision(2) << P1->getSpeed(); // Limite à 2 chiffres après la virgule
+				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
 				SpeedP1.setString(oss.str());
 
 				oss.str("");
-				oss << std::fixed << std::setprecision(2) << P2->getSpeed(); // Limite à 2 chiffres après la virgule
+				oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
 				SpeedP2.setString(oss.str());
 						
             } else {
-                P1->update(window);
+                P1.update(window);
 
                 // Vérification des collisions entre les robots
-                P1->handleCollision(P2);
+                P1.handleCollision(P2);
 
-				batterie1.setSize(sf::Vector2f(80, 160-(100-P1->getHealth())));
-				batterie1.setPosition(5,35+(100-P1->getHealth()));
+				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
+				batterie1.setPosition(5,35+(100-P1.getHealth()));
 
-				batterie2.setSize(sf::Vector2f(80, 160-(100-P2->getHealth()/initialHealth2*100)));
-				batterie2.setPosition(window.getSize().x-95,35+(100-P2->getHealth()/initialHealth2*100));
+				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
+				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
 
-				VieP1.setString(std::to_string(P1->getHealth()));
+				VieP1.setString(std::to_string(P1.getHealth()));
 
-				DefenseP1.setString( std::to_string(P1->getDefense()) );
-				DefenseP2.setString( std::to_string(P2->getDefense()) );
+				DefenseP1.setString( std::to_string(P1.getDefense()) );
+				DefenseP2.setString( std::to_string(P2.getDefense()) );
 
 				oss.str("");
-				oss << std::fixed << std::setprecision(2) << P1->getSpeed(); // Limite à 2 chiffres après la virgule
+				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
 				SpeedP1.setString(oss.str());
             }
             clock.restart();  // Redémarrer l'horloge après chaque mise à jour
@@ -369,8 +369,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		window.clear(sf::Color::White);
 		
         hexagon.drawHexagon(window, sf::Color::Red); 
-        P1->draw(window);  // Dessiner le premier robot
-		if(nbPlayers==2) P2->draw(window);  // Dessiner le deuxième robot
+        P1.draw(window);  // Dessiner le premier robot
+		if(nbPlayers==2) P2.draw(window);  // Dessiner le deuxième robot
 		window.draw(batterie1);
         window.draw(sprite1);
 
@@ -400,35 +400,35 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 	return false	  ;
 }
 
-void Affiche::updateControls() {
+void Affiche::updateControls(Robot& P1, Robot& P2) {
 	std::cout << hexagon.getPoint(0).x << "controle"<<std::endl;
-    if (P1->getControlScheme() == 'A') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P1->moveForward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P1->moveBackward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P1->rotateLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P1->rotateRight();
-    } else if (P1->getControlScheme() == 'B') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P1->moveForward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P1->moveBackward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P1->rotateLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P1->rotateRight();
+    if (P1.getControlScheme() == 'A') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P1.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P1.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P1.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P1.rotateRight();
+    } else if (P1.getControlScheme() == 'B') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P1.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P1.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P1.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P1.rotateRight();
     }
 	if (nbPlayers == 2) {
-            if (P2->getControlScheme() == 'A') {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P2->moveForward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P2->moveBackward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P2->rotateLeft();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P2->rotateRight();
-			} else if (P2->getControlScheme() == 'B') {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P2->moveForward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P2->moveBackward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P2->rotateLeft();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P2->rotateRight();
+            if (P2.getControlScheme() == 'A') {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P2.moveForward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P2.moveBackward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P2.rotateLeft();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P2.rotateRight();
+			} else if (P2.getControlScheme() == 'B') {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P2.moveForward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P2.moveBackward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P2.rotateLeft();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P2.rotateRight();
     } 
             }
 }
 
-bool Affiche::choose(sf::RenderWindow& window) {
+int Affiche::choose(sf::RenderWindow& window) {
 	
 	std::cout << hexagon.getPoint(0).x << std::endl;
     sf::Font font;
@@ -530,6 +530,7 @@ bool Affiche::choose(sf::RenderWindow& window) {
 	Course course2(hexagon,window.getSize().x/2+250,window.getSize().y/2,'A',sf::Color::White );
 	int n=0;
 	int n1=0;
+	int res=0;
     // Boucle principale du menu
     while (window.isOpen()) {
         sf::Event event;
@@ -552,25 +553,19 @@ bool Affiche::choose(sf::RenderWindow& window) {
                 } else if (goButton.getGlobalBounds().contains(mousePosition)) {
                     // Logique pour lancer le jeu après avoir choisi le mode de jeu
 					if(n%3==0){
-						P1= new Sniper;
-						P1=&snip1;}
+						res=res+10;}
 					else if(n%3==1){
-					P1=new Tank;
-					P1=&tank1;
+					res=res+20;
 					}
-					else{P1=new Course;
-					P1=&course1;}	
+					else{res=res+30;}	
 
 					if(n1%3==0){
-						P2= new Sniper;
-						P2=&snip2;}
+						res=res+1;}
 					else if(n1%3==1){
-						P2=new Tank;
-						P2=&tank2;}
+						res=res+2;}
 					else{
-						P2=new Course;
-						P2=&course2;}
-                    return false; // Retourne true pour démarrer le jeu
+						res=res+3;}
+                    return res; // Retourne true pour démarrer le jeu
                 }else if (LeftButton2.getGlobalBounds().contains(mousePosition)) {
                     // Logique pour démarrer le jeu en mode deux joueurs
                     // Exemple : initialiser deux robots
@@ -618,5 +613,5 @@ bool Affiche::choose(sf::RenderWindow& window) {
         window.display();
     }
 	
-    return false; // Retourne false par défaut
+    return 0; // Retourne false par défaut
 }

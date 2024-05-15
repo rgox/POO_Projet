@@ -66,8 +66,8 @@ public:
     void setHealth(int newHealth);
 
 	void update(sf::RenderWindow& window);
-	void handleCollision(Robot* other);
-	void handleCollision(Bonus* other);
+	void handleCollision(Robot& other);
+	void handleCollision(Bonus& other);
 
 	void correctPosition(sf::Vector2f& pos);
 
