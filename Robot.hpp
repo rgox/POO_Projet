@@ -4,6 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include "bonus.hpp"
 
+
+class Projectile;
+
 class Robot {
 public:
     // Constructeur
@@ -51,6 +54,9 @@ public:
 	bool isTouchingBoundary() const;
 	void repositionToCenter();
 	bool checkCollision(const Robot& other) const;
+	void fire();
+	void updateProjectiles(sf::RenderWindow& window);
+
 
 	bool canMove(float newX, float newY);
 
@@ -115,6 +121,8 @@ protected:
 	sf::Vector2f lastValidPosition;
 	float orientation; // Angle en radians
 	float lastOrientation; // Sauvegarde de la dernière orientation
+	std::vector<Projectile> projectiles;
+
 };
 
 

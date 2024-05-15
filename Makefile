@@ -20,7 +20,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 # Règle par défaut pour créer l'exécutable
-all: $(TARGET) start
+all: $(TARGET) start clean
 
 # Lier les fichiers objets pour créer l'exécutable
 $(TARGET): $(OBJECTS)
