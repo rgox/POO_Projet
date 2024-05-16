@@ -26,15 +26,18 @@ int main() {
 
     if (!aff.fin) {
 		int voit=aff.choose(window);
+		if(voit==0){
+			return 0;
+		}
 		if(voit%10==0){
 			Sniper rob2(hexagon,600,450,'A',sf::Color::Blue);
-			if(voit-1==10){
+			if(voit==10){
 				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
 				}
 			}
-			else if(voit-1==20){
+			else if(voit==20){
 				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
@@ -68,15 +71,15 @@ int main() {
 				}
 			}
 		}
-		else if(voit%10==2){
+		else {
 			Course rob2(hexagon,600,450,'A',sf::Color::Blue);
-			if(voit-1==10){
+			if(voit-2==10){
 				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)){
 					aff.updateControls(rob2,rob1);
 				}
 			}
-			else if(voit-1==20){
+			else if(voit-2==20){
 				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)){
             		aff.updateControls(rob2,rob1);
@@ -90,10 +93,8 @@ int main() {
 			}
 			
 		}
-		else{
-			return 0;
-		}
-        
+		
+    
     }
 
     return 0;
