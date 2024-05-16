@@ -374,6 +374,17 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		window.draw(SpeedP2);
 		window.draw(sprite4);
 		window.draw(cloneSprite4);
+		
+		// Dessiner les projectiles
+        for (auto& projectile : P1.getProjectiles()) {
+            projectile.draw(window);
+        }
+        if (nbPlayers == 2) {
+            for (auto& projectile : P2.getProjectiles()) {
+                projectile.draw(window);
+            }
+        }
+
 		window.display();
 		
 		}

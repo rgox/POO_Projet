@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "bonus.hpp"
+#include "Projectile.hpp"
+
 
 
 class Projectile;
@@ -103,6 +105,9 @@ public:
 
 	// Nouvelle méthode pour dessiner les points de débogage
     void drawDebugPoints(sf::RenderWindow& window);
+
+	const std::vector<Projectile>& getProjectiles() const { return projectiles; }
+    std::vector<Projectile>& getProjectiles() { return projectiles; }
 
 protected:
 
