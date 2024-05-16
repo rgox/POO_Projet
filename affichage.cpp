@@ -10,7 +10,8 @@ bool Affiche::menu(sf::RenderWindow& window) {
         return false;
     }
 	
-    sf::Text title;
+    sf::Text title; //on creer le titre
+	
     title.setFont(font);
     title.setString("RobotVroomVromm");
     title.setCharacterSize(70);
