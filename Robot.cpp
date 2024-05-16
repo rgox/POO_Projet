@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <cmath>
 #include "Robot.hpp"
-#include <cmath>
+#include "geometry.hpp"
+#include "Projectile.hpp"
 
 // Constructeur
-
-Robot::Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color)
+Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
 : hexagon(hex), position(x,y),  controlScheme(controlScheme),orientation(0.0f){
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
@@ -19,28 +19,7 @@ Robot::Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color
 // Destructeur
 
 Robot::~Robot() {}
-Robot& Robot::operator=( Robot* other) {
-    if (this != other) {
-        //On copie chaque attribut de l'objet passé en argument
-		hexagon=other->hexagon;
-    	position=other->position;
-    	health=other->health;       // Santé actuelle du robot
-    	speed=other->speed;      // Vitesse de déplacement du robot
-    	attackPower=other->attackPower;  // Puissance d'attaque
-    	defense=other->defense;      // Capacité de défense
-		lastPosX=other->lastPosX;
-		lastPosY=other->lastPosY;
-		rectangleShape=other->rectangleShape;
-		controlScheme=other->controlScheme;  // 'A' pour les flèches, 'B' pour ZQSD
-		color=other->color;
-		width = other->width;   // Largeur du robot, à adapter selon votre setup
-    	height = other->height;  // Hauteur du robot, à adapter selon votre setup
-		lastValidPosition=other->lastValidPosition;
-		orientation=other->orientation; // Angle en radians
-        
-    }
-    return *this;
-}
+
 void Robot::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
@@ -62,6 +41,22 @@ int Robot::getHealth() const {
 
 float Robot::getSpeed() const {
     return speed;
+}
+
+std::vector<LineSegment> Robot::getLineSegments() const {
+    std::vector<LineSegment> segments;
+    
+    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
+    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
+    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
+    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
+    
+    segments.push_back({topLeft, topRight});
+    segments.push_back({topRight, bottomRight});
+    segments.push_back({bottomRight, bottomLeft});
+    segments.push_back({bottomLeft, topLeft});
+    
+    return segments;
 }
 
 // Setters
@@ -98,33 +93,117 @@ void Robot::moveRight() {
 }
 
 void Robot::moveForward() {
+    saveLastPosition();
     float newX = position.x + speed * std::cos(orientation);
     float newY = position.y + speed * std::sin(orientation);
     if (canMove(newX, newY)) {
         position.x = newX;
         position.y = newY;
         rectangleShape.setPosition(position);
+        if (isTouchingBoundary()) {
+            repositionToCenter();
+        }
+    } else {
+        repositionToCenter();
     }
 }
 
+bool Robot::checkCollision(const Robot& other) const {
+    return rectangleShape.getGlobalBounds().intersects(other.rectangleShape.getGlobalBounds());
+}
+
 void Robot::moveBackward() {
+    saveLastPosition();
     float newX = position.x - speed * std::cos(orientation);
     float newY = position.y - speed * std::sin(orientation);
     if (canMove(newX, newY)) {
         position.x = newX;
         position.y = newY;
         rectangleShape.setPosition(position);
+        if (isTouchingBoundary()) {
+            repositionToCenter();
+        }
+    } else {
+        repositionToCenter();
     }
 }
 
+
+bool Robot::isInsideBoundary() const {
+    const float margin = 2.0f; // Marge de sécurité en pixels
+    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
+    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
+    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
+    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
+
+    return hexagon.isInside(topLeft.x - margin, topLeft.y - margin) &&
+           hexagon.isInside(topRight.x + margin, topRight.y - margin) &&
+           hexagon.isInside(bottomLeft.x - margin, bottomLeft.y + margin) &&
+           hexagon.isInside(bottomRight.x + margin, bottomRight.y + margin);
+}
+
 void Robot::rotateLeft() {
-    orientation -= 0.1f; // Ajuster cette valeur pour la vitesse de rotation
+    saveLastOrientation();
+    float newOrientation = orientation - 0.1f; // Ajustez cette valeur pour la vitesse de rotation
+    rectangleShape.setRotation(newOrientation * 180 / M_PI);
+    if (!isInsideBoundary()) {
+        revertToLastOrientation();
+    } else {
+        orientation = newOrientation;
+    }
+}
+
+bool Robot::isTouchingBoundary() const {
+    const int margin = 20; // Marge de sécurité en pixels
+    sf::Vector2f corners[] = {
+        getTransformedPoint(-width / 2, -height / 2),
+        getTransformedPoint(width / 2, -height / 2),
+        getTransformedPoint(-width / 2, height / 2),
+        getTransformedPoint(width / 2, height / 2)
+    };
+
+    for (const auto& corner : corners) {
+		for(int i=-margin ; i<margin;i++){
+			if (!hexagon.isInside(corner.x - margin, corner.y - margin)) {
+				printf("aaaaaaaaaaaaaaaaaaaaah \n");
+            	return true;
+		}
+        
+        }
+    }
+    return false;
+}
+
+void Robot::repositionToCenter() {
+    const float offset = 10.0f; // Distance à quelques pixels du mur
+    sf::Vector2f center = hexagon.getCenter();
+
+    // Calculer la direction du centre de l'arène
+    float deltaX = center.x - position.x;
+    float deltaY = center.y - position.y;
+    float angleToCenter = std::atan2(deltaY, deltaX);
+
+    // Repositionner le robot loin des bords
+    position.x = center.x - (center.x - position.x) * (hexagon.getRadius() - offset) / hexagon.getRadius();
+    position.y = center.y - (center.y - position.y) * (hexagon.getRadius() - offset) / hexagon.getRadius();
+    rectangleShape.setPosition(position);
+
+    // Réorienter vers le centre
+    orientation = angleToCenter;
     rectangleShape.setRotation(orientation * 180 / M_PI);
 }
 
+
+
 void Robot::rotateRight() {
-    orientation += 0.1f; // Ajuster cette valeur pour la vitesse de rotation
-    rectangleShape.setRotation(orientation * 180 / M_PI);
+    saveLastOrientation();
+    float newOrientation = orientation + 0.1f; // Ajustez cette valeur pour la vitesse de rotation
+    rectangleShape.setRotation(newOrientation * 180 / M_PI);
+    if (!isInsideBoundary()) {
+        revertToLastOrientation();
+    } else {
+        orientation = newOrientation;
+    }
 }
 
 void Robot::update(sf::RenderWindow& window) {
@@ -134,16 +213,20 @@ void Robot::update(sf::RenderWindow& window) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) moveBackward();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) rotateLeft();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) rotateRight();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) fire();
     } else if (controlScheme == 'B') {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) moveForward();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveBackward();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) rotateLeft();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) rotateRight();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) fire();
     }
+
+    updateProjectiles(window);
 }
 
 void Robot::handleCollision(Robot& other) {
-    if (rectangleShape.getGlobalBounds().intersects(other.rectangleShape.getGlobalBounds())) {
+    if (checkCollision(other)) {
         // Calculer la direction de recul basée sur l'orientation des robots
         float deltaX = position.x - other.position.x;
         float deltaY = position.y - other.position.y;
@@ -155,30 +238,48 @@ void Robot::handleCollision(Robot& other) {
             deltaY /= distance;
         }
 
+		
         // Appliquer un léger recul
-        float recoil = 5.0f; // Vous pouvez ajuster ce paramètre selon les besoins
-        position.x += deltaX * recoil;
-        position.y += deltaY * recoil;
-        other.position.x -= deltaX * recoil;
-        other.position.y -= deltaY * recoil;
+        float recoil = 50.0f; // Vous pouvez ajuster ce paramètre selon les besoins
+        position.x += deltaX * (recoil/defense);
+        position.y += deltaY * (recoil/defense);
+        other.position.x -= deltaX * (recoil/other.defense);
+        other.position.y -= deltaY * (recoil/other.defense);
 
         // Assurer que les deux robots restent à l'intérieur de l'hexagone
-        ensureInsideBoundary(position);
-        ensureInsideBoundary(other.position);
+        ensureInsideBoundary();
+        other.ensureInsideBoundary();
+
+        rectangleShape.setPosition(position);
+        other.rectangleShape.setPosition(other.position);
     }
 }
 
-void Robot::ensureInsideBoundary(sf::Vector2f& pos) {
-	const float margin = 5.0f; // Marge de sécurité en pixels
+void Robot::ensureInsideBoundary() {
+    const float margin = 2.0f; // Marge de sécurité en pixels
+    std::vector<LineSegment> robotSegments = getLineSegments();
+    std::vector<LineSegment> hexagonSegments = hexagon.getHexagonSegments();
 
-    // Vérifier toutes les coins du rectangle avec l'orientation
-    sf::Transform transform;
-    transform.rotate(orientation * 180 / M_PI, pos);
+    bool collisionDetected = false;
 
-    sf::Vector2f topLeft = transform.transformPoint(sf::Vector2f(pos.x, pos.y));
-    sf::Vector2f topRight = transform.transformPoint(sf::Vector2f(pos.x + width, pos.y));
-    sf::Vector2f bottomLeft = transform.transformPoint(sf::Vector2f(pos.x, pos.y + height));
-    sf::Vector2f bottomRight = transform.transformPoint(sf::Vector2f(pos.x + width, pos.y + height));
+    for (const auto& robotSegment : robotSegments) {
+        for (const auto& hexSegment : hexagonSegments) {
+            if (doLinesIntersect(robotSegment, hexSegment)) {
+                collisionDetected = true;
+                break;
+            }
+        }
+        if (collisionDetected) break;
+    }
+
+    if (collisionDetected || !isInsideBoundary()) {
+        revertToLastPosition();
+    }
+	// Vérifier également si les coins du robot sont à l'intérieur avec la marge
+    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
+    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
+    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
+    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
 
     if (!hexagon.isInside(topLeft.x - margin, topLeft.y - margin) ||
         !hexagon.isInside(topRight.x + margin, topRight.y - margin) ||
@@ -187,6 +288,8 @@ void Robot::ensureInsideBoundary(sf::Vector2f& pos) {
         revertToLastPosition();
     }
 }
+
+
 
 
 void Robot::handleCollision(Bonus& bonus) {
@@ -225,8 +328,17 @@ void Robot::handleCollision(Bonus& bonus) {
     }
 }
 
+void Robot::draw(sf::RenderWindow& window) {
+    window.draw(rectangleShape);
 
- void draw(sf::RenderWindow& window);
+    for (auto& projectile : projectiles) {
+        projectile.draw(window);
+    }
+}
+
+
+
+void draw(sf::RenderWindow& window);
 
 sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
     float cosAngle = std::cos(orientation);
@@ -257,10 +369,10 @@ bool Robot::canMove(float newX, float newY) {
 
 void Robot::drawDebugPoints(sf::RenderWindow& window) {
     // Calculer les positions des coins
-    sf::Vector2f topLeft = getTransformedPoint(0, 0 );
-    sf::Vector2f topRight = getTransformedPoint(width , 0);
-    sf::Vector2f bottomLeft = getTransformedPoint(0, height );
-    sf::Vector2f bottomRight = getTransformedPoint(width , height );
+    sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
+    sf::Vector2f topRight = getTransformedPoint(width / 2, -height / 2);
+    sf::Vector2f bottomLeft = getTransformedPoint(-width / 2, height / 2);
+    sf::Vector2f bottomRight = getTransformedPoint(width / 2, height / 2);
 
     // Créer des cercles pour chaque coin
     sf::CircleShape pointShape(2);
@@ -277,4 +389,23 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
 
     pointShape.setPosition(bottomRight);
     window.draw(pointShape);
+}
+
+void Robot::fire() {
+    projectiles.emplace_back(position.x, position.y, orientation, 5.0f); 
+}
+
+void Robot::updateProjectiles(sf::RenderWindow& window) {
+    for (auto& projectile : projectiles) {
+        projectile.update();
+    }
+
+    // Supprimer les projectiles qui sont hors de l'écran
+    projectiles.erase(
+        std::remove_if(projectiles.begin(), projectiles.end(),
+            [&window](const Projectile& projectile) {
+                return projectile.isOffScreen(window);
+            }),
+        projectiles.end()
+    );
 }

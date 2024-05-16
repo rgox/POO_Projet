@@ -10,7 +10,8 @@ bool Affiche::menu(sf::RenderWindow& window) {
         return false;
     }
 	
-    sf::Text title;
+    sf::Text title; //on creer le titre
+	
     title.setFont(font);
     title.setString("RobotVroomVromm");
     title.setCharacterSize(70);
@@ -140,22 +141,18 @@ bool Affiche::menu(sf::RenderWindow& window) {
 }
 
 
-bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event,Robot& P1, Robot& P2) {
-    	// Effacement de la fenêtre
-    	window.clear();
+bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
+    // Effacement de la fenêtre
+    window.clear();
 
 		//######## Infos des joueurs ##########
-		std::cout << hexagon.getPoint(0).x << "Début refresh" <<std::endl;
+
 		sf::Font font;
 		if (!font.loadFromFile("Ecriture.ttf")) {
 			// Gestion de l'erreur si le chargement de la police échoue
 			return false;
 		}
 		//Joueur P1
-
-		P1.setPosition(window.getSize().x/2-100,window.getSize().y/2);
-		P2.setPosition(window.getSize().x/2+100,window.getSize().y/2);
-
 		sf::Text NomP1;
     	NomP1.setFont(font);
 		NomP1.setString("Enbrrr");
@@ -232,20 +229,6 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sf::Sprite cloneSprite3(sprite3);
 		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(80, 0));
 		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(80, 0));
-
-		//Petit shield
-		sf::Texture texture5;
-		if (!texture5.loadFromFile("shield.png") ) {
-			// Gestion de l'erreur si le chargement de la texture échoue
-			return EXIT_FAILURE;
-		}
-		sf::Sprite sprite5;
-		sprite5.setTexture(texture5);
-		sprite5.setScale(0.025,0.025);
-		sf::Sprite cloneSprite5(sprite5);
-		sprite5.setPosition(DefenseP1.getPosition() + sf::Vector2f(80, 0));
-		cloneSprite5.setPosition(DefenseP2.getPosition() + sf::Vector2f(80, 0));
-
 
 		//Petit logo de vitesse
 		sf::Texture texture4;
@@ -391,39 +374,23 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		window.draw(SpeedP2);
 		window.draw(sprite4);
 		window.draw(cloneSprite4);
-		window.draw(sprite5);
-		window.draw(cloneSprite5);
 		window.display();
-		std::cout << hexagon.getPoint(0).x << "Fin refresh"<< std::endl;
+		
 		}
 
 	return false	  ;
 }
 
-void Affiche::updateControls(Robot& P1, Robot& P2) {
-	std::cout << hexagon.getPoint(0).x << "controle"<<std::endl;
-    if (P1.getControlScheme() == 'A') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P1.moveForward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P1.moveBackward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P1.rotateLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P1.rotateRight();
-    } else if (P1.getControlScheme() == 'B') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P1.moveForward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P1.moveBackward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P1.rotateLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P1.rotateRight();
+void Affiche::updateControls(Robot& robot) {
+    if (robot.getControlScheme() == 'A') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) robot.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) robot.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) robot.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) robot.rotateRight();
+    } else if (robot.getControlScheme() == 'B') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) robot.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) robot.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) robot.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) robot.rotateRight();
     }
-	if (nbPlayers == 2) {
-            if (P2.getControlScheme() == 'A') {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P2.moveForward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P2.moveBackward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P2.rotateLeft();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P2.rotateRight();
-			} else if (P2.getControlScheme() == 'B') {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P2.moveForward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P2.moveBackward();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P2.rotateLeft();
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P2.rotateRight();
-    } 
-            }
 }
