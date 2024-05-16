@@ -2,6 +2,7 @@
 #include <cmath>
 #include "Robot.hpp"
 #include "geometry.hpp"
+#include "Projectile.hpp"
 
 // Constructeur
 
@@ -234,13 +235,16 @@ void Robot::update(sf::RenderWindow& window) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) moveBackward();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) rotateLeft();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) rotateRight();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) fire();
     } else if (controlScheme == 'B') {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) moveForward();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveBackward();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) rotateLeft();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) rotateRight();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) fire();
     }
-	
+
+    updateProjectiles(window);
 }
 
 void Robot::handleCollision(Robot& other) {
@@ -346,8 +350,17 @@ void Robot::handleCollision(Bonus& bonus) {
     }
 }
 
+void Robot::draw(sf::RenderWindow& window) {
+    window.draw(rectangleShape);
 
- void draw(sf::RenderWindow& window);
+    for (auto& projectile : projectiles) {
+        projectile.draw(window);
+    }
+}
+
+
+
+void draw(sf::RenderWindow& window);
 
 sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
     float cosAngle = std::cos(orientation);
@@ -398,4 +411,23 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
 
     pointShape.setPosition(bottomRight);
     window.draw(pointShape);
+}
+
+void Robot::fire() {
+    projectiles.emplace_back(position.x, position.y, orientation, 5.0f); 
+}
+
+void Robot::updateProjectiles(sf::RenderWindow& window) {
+    for (auto& projectile : projectiles) {
+        projectile.update();
+    }
+
+    // Supprimer les projectiles qui sont hors de l'écran
+    projectiles.erase(
+        std::remove_if(projectiles.begin(), projectiles.end(),
+            [&window](const Projectile& projectile) {
+                return projectile.isOffScreen(window);
+            }),
+        projectiles.end()
+    );
 }
