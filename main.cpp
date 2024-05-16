@@ -20,8 +20,7 @@ int main() {
 	sf::Vector2f pos1 = hexagon.getPoint(0);
 	sf::Vector2f pos3 = hexagon.getPoint(3);
 
-   	std::cout << hexagon.getPoint(0).x << std::endl;
-    Affiche aff(hexagon);
+
     while (aff.menu(window)) {}
 
     if (!aff.fin) {
@@ -32,25 +31,18 @@ int main() {
 				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
-					rob1.updateProjectiles(window); 
-    				rob2.updateProjectiles(window);
 				}
 			}
 			else if(voit-1==20){
 				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
-					rob1.updateProjectiles(window); 
-    				rob2.updateProjectiles(window);
 				}
 			}
 			else{
 				Course rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window); 
-    				rob2.updateProjectiles(window); 
 				}
 			}
 		}
@@ -60,27 +52,18 @@ int main() {
 				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window);
-    				rob2.updateProjectiles(window); 
 				}
 			}
 			else if(voit-1==20){
 				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window);
-    				rob2.updateProjectiles(window); 
 				}
 			}
 			else{
 				Course rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
 					aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window);
-    				rob2.updateProjectiles(window); 
 				}
 			}
 		}
@@ -90,27 +73,18 @@ int main() {
 				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)){
 					aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window);
-    				rob2.updateProjectiles(window); 
 				}
 			}
 			else if(voit-1==20){
 				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)){
             		aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window);
-    				rob2.updateProjectiles(window); 
         		}
 			}
 			else{
 				Course rob1(hexagon,400,450,'B',sf::Color::Blue);
 				while (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
             		aff.updateControls(rob2,rob1);
-
-					rob1.updateProjectiles(window);
-    				rob2.updateProjectiles(window); 
         		}
 			}
 			
