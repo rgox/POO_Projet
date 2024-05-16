@@ -4,7 +4,8 @@
 #include "geometry.hpp"
 
 // Constructeur
-Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
+
+Robot::Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color)
 : hexagon(hex), position(x,y),  controlScheme(controlScheme),orientation(0.0f){
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
@@ -18,7 +19,28 @@ Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color colo
 // Destructeur
 
 Robot::~Robot() {}
-
+Robot& Robot::operator=( Robot* other) {
+    if (this != other) {
+        //On copie chaque attribut de l'objet passé en argument
+		hexagon=other->hexagon;
+    	position=other->position;
+    	health=other->health;       // Santé actuelle du robot
+    	speed=other->speed;      // Vitesse de déplacement du robot
+    	attackPower=other->attackPower;  // Puissance d'attaque
+    	defense=other->defense;      // Capacité de défense
+		lastPosX=other->lastPosX;
+		lastPosY=other->lastPosY;
+		rectangleShape=other->rectangleShape;
+		controlScheme=other->controlScheme;  // 'A' pour les flèches, 'B' pour ZQSD
+		color=other->color;
+		width = other->width;   // Largeur du robot, à adapter selon votre setup
+    	height = other->height;  // Hauteur du robot, à adapter selon votre setup
+		lastValidPosition=other->lastValidPosition;
+		orientation=other->orientation; // Angle en radians
+        
+    }
+    return *this;
+}
 void Robot::setPosition(float x, float y) {
     position.x = x;
     position.y = y;

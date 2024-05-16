@@ -20,20 +20,80 @@ int main() {
 	sf::Vector2f pos1 = hexagon.getPoint(0);
 	sf::Vector2f pos3 = hexagon.getPoint(3);
 
-    Sniper snip(hexagon, pos1.x - 20, pos1.y - 15,  'A', sf::Color::Red);
-	snip.setPosition(640,540);
-    Tank robot2(hexagon, pos3.x - 20, pos3.y - 15,  'B', sf::Color::Blue);
-	robot2.setPosition(1280,540);
-    Affiche aff(hexagon, snip, robot2);
+   	std::cout << hexagon.getPoint(0).x << std::endl;
+    Affiche aff(hexagon);
     while (aff.menu(window)) {}
 
     if (!aff.fin) {
-        while (aff.refresh(window, timePerMove, clock, event)) {
-            aff.updateControls(snip);
-            if (aff.getNbPlayers() == 2) {
-                aff.updateControls(robot2);
-            }
-        }
+		int voit=aff.choose(window);
+		if(voit%10==0){
+			Sniper rob2(hexagon,600,450,'A',sf::Color::Blue);
+			if(voit-1==10){
+				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+					aff.updateControls(rob2,rob1);
+				}
+			}
+			else if(voit-1==20){
+				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+					aff.updateControls(rob2,rob1);
+				}
+			}
+			else{
+				Course rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+					aff.updateControls(rob2,rob1);
+				}
+			}
+		}
+		else if(voit%10==1){
+			Tank rob2(hexagon,600,450,'A',sf::Color::Blue);
+			if(voit-1==10){
+				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+					aff.updateControls(rob2,rob1);
+				}
+			}
+			else if(voit-1==20){
+				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+					aff.updateControls(rob2,rob1);
+				}
+			}
+			else{
+				Course rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+					aff.updateControls(rob2,rob1);
+				}
+			}
+		}
+		else if(voit%10==2){
+			Course rob2(hexagon,600,450,'A',sf::Color::Blue);
+			if(voit-1==10){
+				Sniper rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)){
+					aff.updateControls(rob2,rob1);
+				}
+			}
+			else if(voit-1==20){
+				Tank rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while  (aff.refresh(window, timePerMove, clock, event,rob1,rob2)){
+            		aff.updateControls(rob2,rob1);
+        		}
+			}
+			else{
+				Course rob1(hexagon,400,450,'B',sf::Color::Blue);
+				while (aff.refresh(window, timePerMove, clock, event,rob1,rob2)) {
+            		aff.updateControls(rob2,rob1);
+        		}
+			}
+			
+		}
+		else{
+			return 0;
+		}
+        
     }
 
     return 0;

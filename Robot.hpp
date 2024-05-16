@@ -8,8 +8,10 @@ class Robot {
 public:
     // Constructeur
 	Robot();
-    Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color);
+    Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color);
 	
+	Robot& operator=(Robot* other);
+
 	
 	
     // Destructeur
