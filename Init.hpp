@@ -1,5 +1,5 @@
-#ifndef AFFICHE_HPP
-#define AFFICHE_HPP
+#ifndef INIT_HPP
+#define INIT_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -10,12 +10,10 @@
 #include "arene.hpp"
 #include "bonus.hpp"
 
-class Affiche {
+class Init {
 	public:
 	
-		Affiche(Hexagone& hexagone, Robot& rob1, Robot& rob2)
-    : hexagon(hexagone), P1(rob1), P2(rob2) {
-
+		Init() {
 			this->texture.loadFromFile("background.jpg");
 			if (!texture.loadFromFile("background.jpg")) {
 				// Gestion de l'erreur si le chargement de la texture échoue
@@ -25,22 +23,18 @@ class Affiche {
 		};
 
 		
-		bool refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event);
-		
+		bool menu(sf::RenderWindow& window);
+		bool choose(sf::RenderWindow& window,int* res);
 		bool fin= false;
 
 	
-    	void updateControls(Robot& robot);
 		int getNbPlayers() const { return nbPlayers; }
 
 	private:
-		Hexagone& hexagon;
-    	Robot& P1;
-    	Robot& P2;
 		sf::Texture texture;
 		sf::Sprite sprite;
 		int nbPlayers=0;
 		
 };
 
-#endif // AFFICHE_HPP
+#endif // INIT_HPP

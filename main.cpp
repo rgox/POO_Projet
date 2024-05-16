@@ -1,12 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include "sniper.hpp"
 #include "Tank.hpp"
-
+#include "Course.hpp"
 #include "arene.hpp"
 #include <iostream>
 #include "bonus.hpp"
 #include "affichage.hpp"
-
+#include "Init.hpp"
 
 int main() {
 	sf::Event event;
@@ -20,23 +20,39 @@ int main() {
 	sf::Vector2f pos1 = hexagon.getPoint(0);
 	sf::Vector2f pos3 = hexagon.getPoint(3);
 
-    Sniper snip(hexagon, pos1.x - 20, pos1.y - 15,  'A', sf::Color::Red);
-	snip.setPosition(640,540);
-    Tank robot2(hexagon, pos3.x - 20, pos3.y - 15,  'B', sf::Color::Blue);
-	robot2.setPosition(1280,540);
-    Affiche aff(hexagon, snip, robot2);
-    while (aff.menu(window)) {}
+	Robot* rob1 = nullptr;
+	Robot* rob2 = nullptr;
+    Init debut;
+	int res[2];
+    while (debut.menu(window)) {}
 
-    if (!aff.fin) {
+    if (!debut.fin) {
+		if(debut.choose(window,res)){
+			printf("res[0]= %d; res[1]=%d\n",res[0],res[1]);
+		if(res[0]==0 | res[1]==0) {
+			return 0;}
+		if(res[0]==1)rob1=new Sniper (hexagon,600,window.getSize().y,'A',sf::Color::Red);
+		if(res[0]==2)rob1=new Tank (hexagon,600,window.getSize().y,'A',sf::Color::Red);
+		if(res[0]==3)rob1= new Course (hexagon,600,window.getSize().y,'A',sf::Color::Red);
+		if(res[1]==1)rob2=new Sniper (hexagon,600,window.getSize().y,'A',sf::Color::Red);
+		if(res[2]==2)rob2=new Tank (hexagon,600,window.getSize().y,'A',sf::Color::Red);
+		if(res[3]==3)rob2= new Course (hexagon,600,window.getSize().y,'A',sf::Color::Red);
+		printf("Peut-être \n");
+		Affiche aff(hexagon, *rob1, *rob2);
+		printf("ICI");
         while (aff.refresh(window, timePerMove, clock, event)) {
-            aff.updateControls(snip);
+            aff.updateControls(*rob1);
             if (aff.getNbPlayers() == 2) {
-                aff.updateControls(robot2);
+                aff.updateControls(*rob2);
             }
-			snip.updateProjectiles(window);
-    		robot2.updateProjectiles(window);
+			(*rob1).updateProjectiles(window);
+    		(*rob2).updateProjectiles(window);
         }
     }
+	}
+	delete rob1;
+	delete rob2;
+
 
     return 0;
 }
