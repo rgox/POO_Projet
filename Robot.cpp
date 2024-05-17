@@ -336,10 +336,6 @@ void Robot::draw(sf::RenderWindow& window) {
     }
 }
 
-
-
-void draw(sf::RenderWindow& window);
-
 sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
     float cosAngle = std::cos(orientation);
     float sinAngle = std::sin(orientation);
