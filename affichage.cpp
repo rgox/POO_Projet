@@ -138,18 +138,22 @@ bool Affiche::menu(sf::RenderWindow& window) {
 }
 
 
-bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
-    // Effacement de la fenêtre
-    window.clear();
+bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event,Robot& P1, Robot& P2) {
+    	// Effacement de la fenêtre
+    	window.clear();
 
 		//######## Infos des joueurs ##########
-
+		std::cout << hexagon.getPoint(0).x << "Début refresh" <<std::endl;
 		sf::Font font;
 		if (!font.loadFromFile("Ecriture.ttf")) {
 			// Gestion de l'erreur si le chargement de la police échoue
 			return false;
 		}
 		//Joueur P1
+
+		P1.setPosition(window.getSize().x/2-100,window.getSize().y/2);
+		P2.setPosition(window.getSize().x/2+100,window.getSize().y/2);
+
 		sf::Text NomP1;
     	NomP1.setFont(font);
 		NomP1.setString("Enbrrr");
@@ -226,6 +230,20 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sf::Sprite cloneSprite3(sprite3);
 		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(80, 0));
 		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(80, 0));
+
+		//Petit shield
+		sf::Texture texture5;
+		if (!texture5.loadFromFile("shield.png") ) {
+			// Gestion de l'erreur si le chargement de la texture échoue
+			return EXIT_FAILURE;
+		}
+		sf::Sprite sprite5;
+		sprite5.setTexture(texture5);
+		sprite5.setScale(0.025,0.025);
+		sf::Sprite cloneSprite5(sprite5);
+		sprite5.setPosition(DefenseP1.getPosition() + sf::Vector2f(80, 0));
+		cloneSprite5.setPosition(DefenseP2.getPosition() + sf::Vector2f(80, 0));
+
 
 		//Petit logo de vitesse
 		sf::Texture texture4;
@@ -371,23 +389,172 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		window.draw(SpeedP2);
 		window.draw(sprite4);
 		window.draw(cloneSprite4);
+		window.draw(sprite5);
+		window.draw(cloneSprite5);
 		window.display();
-		
+		std::cout << hexagon.getPoint(0).x << "Fin refresh"<< std::endl;
 		}
 
 	return false	  ;
 }
 
-void Affiche::updateControls(Robot& robot) {
-    if (robot.getControlScheme() == 'A') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) robot.moveForward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) robot.moveBackward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) robot.rotateLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) robot.rotateRight();
-    } else if (robot.getControlScheme() == 'B') {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) robot.moveForward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) robot.moveBackward();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) robot.rotateLeft();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) robot.rotateRight();
+void Affiche::updateControls(Robot& P1, Robot& P2) {
+	std::cout << hexagon.getPoint(0).x << "controle"<<std::endl;
+    if (P1.getControlScheme() == 'A') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P1.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P1.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P1.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P1.rotateRight();
+    } else if (P1.getControlScheme() == 'B') {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P1.moveForward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P1.moveBackward();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P1.rotateLeft();
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P1.rotateRight();
     }
+	if (nbPlayers == 2) {
+            if (P2.getControlScheme() == 'A') {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) P2.moveForward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) P2.moveBackward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) P2.rotateLeft();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) P2.rotateRight();
+			} else if (P2.getControlScheme() == 'B') {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) P2.moveForward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) P2.moveBackward();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) P2.rotateLeft();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) P2.rotateRight();
+    } 
+            }
+}
+
+int Affiche::choose(sf::RenderWindow& window) {
+    sf::Font font;
+    if (!font.loadFromFile("Ecriture.ttf")) {
+        // Gestion de l'erreur si le chargement de la police échoue
+        return false;
+    }
+    
+    sf::Text title;
+    title.setFont(font);
+    title.setString("Choose your player");
+    title.setCharacterSize(70);
+    title.setFillColor(sf::Color::White);
+    title.setPosition(window.getSize().x / 2 - 300, 200);
+    sf::Text clonetitle(title);
+    clonetitle.setPosition(window.getSize().x / 2 - 300, window.getSize().y - 350);
+
+    sf::Text Player1;
+    Player1.setFont(font);
+    Player1.setString("Player 1");
+    Player1.setCharacterSize(20);
+    Player1.setFillColor(sf::Color::White);
+    Player1.setPosition(window.getSize().x / 2 - 250, window.getSize().y / 2 - 100);
+
+    sf::Text Player2;
+    Player2.setFont(font);
+    Player2.setString("Player 2");
+    Player2.setCharacterSize(20);
+    Player2.setFillColor(sf::Color::White);
+    Player2.setPosition(window.getSize().x / 2 + 250, window.getSize().y / 2 - 100);
+
+    sf::Text goButton;
+    goButton.setFont(font);
+    goButton.setString("Go !");
+    goButton.setCharacterSize(25);
+    goButton.setFillColor(sf::Color::White);
+    goButton.setPosition(window.getSize().x / 2, window.getSize().y / 2 + 20);
+    
+    sf::Texture textLeftButton, textRightButton;
+    if (!textLeftButton.loadFromFile("flatDark23.png") || !textRightButton.loadFromFile("flatDark24.png")) {
+        // Gestion de l'erreur si le chargement de la texture échoue
+        return EXIT_FAILURE;
+    }
+    
+    sf::Sprite LeftButton1(textLeftButton), LeftButton2(textLeftButton), RightButton1(textRightButton), RightButton2(textRightButton);
+    LeftButton1.setScale(1, 1);
+    LeftButton1.setPosition(window.getSize().x / 2 - 350, window.getSize().y / 2);
+    LeftButton2.setScale(1, 1);
+    LeftButton2.setPosition(window.getSize().x / 2 + 150, window.getSize().y / 2);
+    RightButton1.setScale(1, 1);
+    RightButton1.setPosition(window.getSize().x / 2 - 150, window.getSize().y / 2);
+    RightButton2.setScale(1, 1);
+    RightButton2.setPosition(window.getSize().x / 2 + 350, window.getSize().y / 2);
+
+    // Chargement des images de fond
+    std::vector<sf::Texture> frames;
+    for (int i = 1; i <= 50; ++i) {
+        sf::Texture texture2;
+        std::string filename = "background1/background1_out00" + std::to_string(i) + ".png";
+        if (i < 10) filename = "background1/background1_out000" + std::to_string(i) + ".png";
+        if (!texture2.loadFromFile(filename)) return EXIT_FAILURE;
+        frames.push_back(texture2);
+    }
+
+    sf::Sprite sprite;
+    int currentFrame = 0;
+    sf::Clock clock;
+
+    // Variables de sélection initialisées à 0
+    int n = 0, n1 = 0, res = 0;
+    Sniper snip1(hexagon, window.getSize().x / 2 - 250, window.getSize().y / 2, 'A', sf::Color::White);
+    Sniper snip2(hexagon, window.getSize().x / 2 + 250, window.getSize().y / 2, 'A', sf::Color::White);
+    Tank tank1(hexagon, window.getSize().x / 2 - 250, window.getSize().y / 2, 'A', sf::Color::White);
+    Tank tank2(hexagon, window.getSize().x / 2 + 250, window.getSize().y / 2, 'A', sf::Color::White);
+    Course course1(hexagon, window.getSize().x / 2 - 250, window.getSize().y / 2, 'A', sf::Color::White);
+    Course course2(hexagon, window.getSize().x / 2 + 250, window.getSize().y / 2, 'A', sf::Color::White);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+                fin = true;
+                return 0;
+            } else if (event.type == sf::Event::MouseButtonPressed) {
+                sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                if (RightButton1.getGlobalBounds().contains(mousePosition)) {
+                    n = (n + 1) % 3;
+                } else if (LeftButton1.getGlobalBounds().contains(mousePosition)) {
+                    n = (n - 1 + 3) % 3;
+                } else if (RightButton2.getGlobalBounds().contains(mousePosition)) {
+                    n1 = (n1 + 1) % 3;
+                } else if (LeftButton2.getGlobalBounds().contains(mousePosition)) {
+                    n1 = (n1 - 1 + 3) % 3;
+                } else if (goButton.getGlobalBounds().contains(mousePosition)) {
+                    res = (n * 10) + (n1 + 1);
+                    return res;
+                }
+            }
+        }
+
+        window.clear();
+        sprite.setTexture(frames[currentFrame]);
+        sprite.setScale((window.getSize().x) / 480, (window.getSize().y) / 300);
+        if (clock.getElapsedTime().asMilliseconds() >= 100) {
+            currentFrame = (currentFrame + 1) % frames.size();
+            clock.restart();
+        }
+
+        window.draw(sprite);
+        window.draw(title);
+        window.draw(clonetitle);
+        window.draw(Player1);
+        window.draw(LeftButton1);
+        window.draw(LeftButton2);
+        window.draw(RightButton1);
+        window.draw(RightButton2);
+        window.draw(Player2);
+        window.draw(goButton);
+
+        if (n == 0) snip1.draw(window);
+        else if (n == 1) tank1.draw(window);
+        else course1.draw(window);
+
+        if (n1 == 0) snip2.draw(window);
+        else if (n1 == 1) tank2.draw(window);
+        else course2.draw(window);
+
+        window.display();
+    }
+
+    return 0;
 }

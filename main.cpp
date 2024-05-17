@@ -9,31 +9,54 @@
 
 
 int main() {
-	sf::Event event;
+    sf::Event event;
     srand(static_cast<unsigned int>(time(nullptr)));
 
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Robot and Hexagon Arena");
     sf::Clock clock;
-    const sf::Time timePerMove = sf::milliseconds(50);  // Définir l'intervalle de mise à jour
-	Hexagone hexagon(window.getSize().x, window.getSize().y);
-    /// Appliquez un décalage vers le centre pour chaque robot
-	sf::Vector2f pos1 = hexagon.getPoint(0);
-	sf::Vector2f pos3 = hexagon.getPoint(3);
+    const sf::Time timePerMove = sf::milliseconds(50);
+    Hexagone hexagon(window.getSize().x, window.getSize().y);
+    Affiche aff(hexagon);
 
-    Sniper snip(hexagon, pos1.x - 20, pos1.y - 15,  'A', sf::Color::Red);
-	snip.setPosition(500,500);
-    Tank robot2(hexagon, pos3.x - 20, pos3.y - 15,  'B', sf::Color::Blue);
-	robot2.setPosition(600,600);
-    Affiche aff(hexagon, snip, robot2);
     while (aff.menu(window)) {}
 
     if (!aff.fin) {
-        while (aff.refresh(window, timePerMove, clock, event)) {
-            aff.updateControls(snip);
-            if (aff.getNbPlayers() == 2) {
-                aff.updateControls(robot2);
+        int voit = aff.choose(window);
+        Robot* rob1 = nullptr;
+        Robot* rob2 = nullptr;
+
+        switch (voit / 10) {
+            case 0:
+                rob2 = new Sniper(hexagon, 600, 450, 'A', sf::Color::Blue);
+                break;
+            case 1:
+                rob2 = new Tank(hexagon, 600, 450, 'A', sf::Color::Blue);
+                break;
+            case 2:
+                rob2 = new Course(hexagon, 600, 450, 'A', sf::Color::Blue);
+                break;
+        }
+
+        switch (voit % 10) {
+            case 1:
+                rob1 = new Sniper(hexagon, 400, 450, 'B', sf::Color::Blue);
+                break;
+            case 2:
+                rob1 = new Tank(hexagon, 400, 450, 'B', sf::Color::Blue);
+                break;
+            case 3:
+                rob1 = new Course(hexagon, 400, 450, 'B', sf::Color::Blue);
+                break;
+        }
+
+        if (rob1 && rob2) {
+            while (aff.refresh(window, timePerMove, clock, event, *rob1, *rob2)) {
+                aff.updateControls(*rob1, *rob2);
             }
         }
+
+        delete rob1;
+        delete rob2;
     }
 
     return 0;

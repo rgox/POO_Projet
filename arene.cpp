@@ -5,6 +5,9 @@
 
 
 
+// Définition de l'instance par défaut
+
+
 bool Hexagone::isInside(float x, float y) const {
     int crossings = 0;
     for (size_t i = 0; i < 6; ++i) {

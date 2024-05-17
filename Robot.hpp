@@ -1,111 +1,125 @@
-#ifndef ROBOT_HPP
-#define ROBOT_HPP
+	#ifndef ROBOT_HPP
+	#define ROBOT_HPP
 
-#include <SFML/Graphics.hpp>
-#include "bonus.hpp"
-#include "arene.hpp"
+	#include <SFML/Graphics.hpp>
+	#include "bonus.hpp"
+	#include "arene.hpp"
 
-class Robot {
-public:
-    // Constructeur
-	Robot();
-    Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color);
-	
-	
-	
-    // Destructeur
-    virtual ~Robot();
+	class Robot {
+	public:
+		// Constructeur
+		Robot();
+		Robot(Hexagone hex, float x, float y, char controlScheme, sf::Color color);
+		
+		Robot& operator=(Robot* other);
 
-    // Fonctions de mouvement
-    void moveUp();
-    void moveDown();
-    void moveLeft();
-    void moveRight();
+		
+		
+		// Destructeur
+		virtual ~Robot();
 
-	void moveForward();
-	void moveBackward();
-	void rotateLeft();
-	void rotateRight();
+		// Fonctions de mouvement
+		void moveUp();
+		void moveDown();
+		void moveLeft();
+		void moveRight();
 
-	void setPosition(float x, float y);
+		void moveForward();
+		void moveBackward();
+		void rotateLeft();
+		void rotateRight();
 
-	void saveLastPosition() {
-        lastPosX = position.x;
-        lastPosY = position.y;
-    }
+		void setPosition(float x, float y);
 
-	void revertToLastPosition() {
-        position.x = lastPosX;
-        position.y = lastPosY;
-    }
+		void saveLastPosition() {
+			lastPosX = position.x;
+			lastPosY = position.y;
+		}
 
-	void ensureInsideBoundary(sf::Vector2f& pos);
+		void revertToLastPosition() {
+			position.x = lastPosX;
+			position.y = lastPosY;
+		}
 
-	bool canMove(float newX, float newY);
+		void ensureInsideBoundary(sf::Vector2f& pos);
 
-    // Getters et Setters
-    float getX() const;
-    float getY() const;
-    int getHealth() const;
-	float getSpeed() const;
-	float getWidth() const {
-		return this->width;
-	}
-	int getDefense() const {
-		return this->defense;
-	}
-	float getHeight() const {
-		return this->height;
-	}
-	float getOrientation() const { return orientation; }
-	char getControlScheme() const { return controlScheme; }  // Ajoutez ce getter
+		bool canMove(float newX, float newY);
+
+		// Getters et Setters
+		float getX() const;
+		float getY() const;
+		int getHealth() const;
+		float getSpeed() const;
+		float getWidth() const {
+			return this->width;
+		}
+		int getDefense() const {
+			return this->defense;
+		}
+		float getHeight() const {
+			return this->height;
+		}
+		float getOrientation() const { return orientation; }
+		char getControlScheme() const { return controlScheme; }  // Ajoutez ce getter
 
 
-    void setHealth(int newHealth);
+		void setHealth(int newHealth);
 
-	void update(sf::RenderWindow& window);
-	void handleCollision(Robot& other);
-	void handleCollision(Bonus& other);
+		void update(sf::RenderWindow& window);
+		void handleCollision(Robot& other);
+		void handleCollision(Bonus& other);
 
-	void correctPosition(sf::Vector2f& pos);
+		void correctPosition(sf::Vector2f& pos);
 
+<<<<<<< HEAD
 	void draw(sf::RenderWindow& window);
 		sf::RectangleShape get_Shape(){
 		return rectangleShape;
 	}
+=======
+		virtual void draw(sf::RenderWindow& window)=0;
 
-	void saveLastValidPosition() {
-        if (hexagon.isInside(position.x, position.y)) {
-            lastValidPosition = position;
-        }
-    }
+			sf::RectangleShape get_Shape(){
+			return rectangleShape;
+		}
+>>>>>>> Javi
 
-	sf::Vector2f getTransformedPoint(float offsetX, float offsetY) const;
+		void saveLastValidPosition() {
+			if (hexagon.isInside(position.x, position.y)) {
+				lastValidPosition = position;
+			}
+		}
 
-	// Nouvelle méthode pour dessiner les points de débogage
-    void drawDebugPoints(sf::RenderWindow& window);
+		sf::Vector2f getTransformedPoint(float offsetX, float offsetY) const;
 
+		// Nouvelle méthode pour dessiner les points de débogage
+		void drawDebugPoints(sf::RenderWindow& window);
+
+<<<<<<< HEAD
 	void correctPosition();
 	bool isInsideBoundary();
 
 protected:
+=======
+	protected:
+>>>>>>> Javi
 
-	Hexagone& hexagon;
-    sf::Vector2f position;
-    int health=10;       // Santé actuelle du robot
-    float speed=10;      // Vitesse de déplacement du robot
-    int attackPower;  // Puissance d'attaque
-    int defense;      // Capacité de défense
-	float lastPosX, lastPosY;
-	sf::RectangleShape rectangleShape;
-	char controlScheme;  // 'A' pour les flèches, 'B' pour ZQSD
-	sf::Color color;
-	float width = 40;   // Largeur du robot, à adapter selon votre setup
-    float height = 30;  // Hauteur du robot, à adapter selon votre setup
-	sf::Vector2f lastValidPosition;
-	float orientation; // Angle en radians
-};
+		Hexagone& hexagon;
+		sf::Vector2f position;
+		int health=10;       // Santé actuelle du robot
+		float speed=10;      // Vitesse de déplacement du robot
+		int attackPower;  // Puissance d'attaque
+		int defense;      // Capacité de défense
+		float lastPosX, lastPosY;
+		sf::RectangleShape rectangleShape;
+		char controlScheme;  // 'A' pour les flèches, 'B' pour ZQSD
+		sf::Color color;
+		float width = 40;   // Largeur du robot, à adapter selon votre setup
+		float height = 30;  // Hauteur du robot, à adapter selon votre setup
+		sf::Vector2f lastValidPosition;
+		float orientation; // Angle en radians
+	};
 
 
 
-#endif // ROBOT_HPP
+	#endif // ROBOT_HPP
