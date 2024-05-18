@@ -48,14 +48,15 @@ int main() {
 				if (aff.getNbPlayers() == 2) {
 					aff.updateControls(*rob2);
 				}
-				(*rob1).updateProjectiles(window);
-				(*rob2).updateProjectiles(window);
+				(*rob1).updateProjectiles(window, *rob2);
+				(*rob2).updateProjectiles(window, *rob1);
 			}
     }
-	}
+	
 	delete rob1;
 	delete rob2;
 
 
     return 0;
+}
 }

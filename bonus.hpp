@@ -6,30 +6,27 @@
 #include <ctime>   // Pour time
 #include "arene.hpp"
 
-
-
 class Bonus {
 private:
-	sf::Vector2f position;
-	sf::CircleShape circleShape;
-	sf::RectangleShape rectangleShape;
-	sf::ConvexShape triangleShape;
-	std::string shape;
-	int type=rand()%4+1;
-	int value=rand()%10+1;
-	int apptime=10;
-	
+    sf::Vector2f position;
+    sf::CircleShape circleShape;
+    sf::RectangleShape rectangleShape;
+    sf::ConvexShape triangleShape;
+    std::string shape;
+    int type = rand() % 4 + 1;
+    int value = rand() % 10 + 1;
+    int apptime = 10;
+
 public:
-    Bonus(Hexagone arene) {
+    Bonus(Hexagone& arene,const sf::RenderWindow& window) {
         // Initialiser le générateur de nombres pseudo-aléatoires avec le temps actuel
         srand(static_cast<unsigned int>(time(nullptr)));
 
-        // Générer une position aléatoire dans la fenêtre
-        position.x = static_cast<float>(rand() % 800); // Position x aléatoire dans une fenêtre de 800x600
-        position.y = static_cast<float>(rand() % 600); // Position y aléatoire dans une fenêtre de 800x600
-		while(arene.isInside(position.x,position.y)){
-			position.x = static_cast<float>(rand() % 800); 
-        	position.y = static_cast<float>(rand() % 600); }   
+        // Générer une position aléatoire dans l'hexagone
+        do {
+            position.x = static_cast<float>(rand() % window.getSize().x); // Position x aléatoire dans les limites de la fenêtre
+            position.y = static_cast<float>(rand() % window.getSize().y); // Position y aléatoire dans une fenêtre de 800x600
+        } while (!arene.isInside(position.x, position.y));
 
         // Créer une forme aléatoire (dans cet exemple, un cercle, un rectangle ou un triangle)
         int shapeType = rand() % 3;
@@ -41,7 +38,7 @@ public:
                 circleShape.setOutlineColor(sf::Color::Black);
                 circleShape.setOrigin(20, 20); // Origine au centre du cercle
                 circleShape.setPosition(position);
-				shape="cercle";
+                shape = "cercle";
                 break;
             case 1: // Rectangle
                 rectangleShape.setSize(sf::Vector2f(40, 40));
@@ -50,7 +47,7 @@ public:
                 rectangleShape.setOutlineColor(sf::Color::Black);
                 rectangleShape.setOrigin(20, 20); // Origine au centre du rectangle
                 rectangleShape.setPosition(position);
-				shape="rectangle";
+                shape = "rectangle";
                 break;
             case 2: // Triangle
                 triangleShape.setPointCount(3);
@@ -62,35 +59,32 @@ public:
                 triangleShape.setOutlineColor(sf::Color::Black);
                 triangleShape.setOrigin(0, 0); // Origine au centre du triangle
                 triangleShape.setPosition(position);
-				shape="triangle";
+                shape = "triangle";
                 break;
         }
     }
-	sf::Vector2f get_position(){
-		return position;
-	}
-    sf::CircleShape get_circleShape(){
-		return circleShape;
-	}
-    sf::RectangleShape get_rectangleShape(){
-		return rectangleShape;
-	}
-	sf::ConvexShape get_triangleShape(){
-		return triangleShape;
-	}
 
-	std::string get_shape(){
-		return shape;
-	}
+    // Getters pour les formes
+    const sf::CircleShape& getCircleShape() const { return circleShape; }
+    const sf::RectangleShape& getRectangleShape() const { return rectangleShape; }
+    const sf::ConvexShape& getTriangleShape() const { return triangleShape; }
+    const std::string& getShape() const { return shape; }
 
-	int get_bonustype(){
-		return type;
-	}
-	int get_value(){
-		return value;
-	}
+    // Getters pour les propriétés du bonus
+    int getBonusType() const { return type; }
+    int getValue() const { return value; }
 
-    void drawBonus(sf::RenderWindow& window) const ;
+    void drawBonus(sf::RenderWindow& window) const {
+        if (circleShape.getRadius() != 0) {
+            window.draw(circleShape);
+        } else if (rectangleShape.getSize() != sf::Vector2f(0, 0)) {
+            window.draw(rectangleShape);
+        } else {
+            window.draw(triangleShape);
+        }
+    }
 
+    sf::Vector2f getPosition() const { return position; }
 };
-#endif //BONUS_HPP
+
+#endif // BONUS_HPP

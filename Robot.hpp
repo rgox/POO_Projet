@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include "bonus.hpp"
+#include "Projectile.hpp"
+
 
 
 class Projectile;
@@ -55,7 +57,7 @@ public:
 	void repositionToCenter();
 	bool checkCollision(const Robot& other) const;
 	void fire();
-	void updateProjectiles(sf::RenderWindow& window);
+	void updateProjectiles(sf::RenderWindow& window, Robot& other);
 
 
 	bool canMove(float newX, float newY);
@@ -81,7 +83,7 @@ public:
 
     void setHealth(int newHealth);
 
-	void update(sf::RenderWindow& window);
+	void update(sf::RenderWindow& window, Robot& other);
 	void handleCollision(Robot& other);
 	void handleCollision(Bonus& other);
 
@@ -103,6 +105,9 @@ public:
 
 	// Nouvelle méthode pour dessiner les points de débogage
     void drawDebugPoints(sf::RenderWindow& window);
+
+	const std::vector<Projectile>& getProjectiles() const { return projectiles; }
+    std::vector<Projectile>& getProjectiles() { return projectiles; }
 
 protected:
 
