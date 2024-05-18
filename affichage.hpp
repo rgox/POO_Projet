@@ -29,7 +29,7 @@ class Affiche {
 		
 		bool fin= false;
 
-	
+		void set_nbPlayers(int i){nbPlayers=i;}
     	void updateControls(Robot& robot);
 		int getNbPlayers() const { return nbPlayers; }
 

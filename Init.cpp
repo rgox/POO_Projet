@@ -2,7 +2,7 @@
 #include <iomanip> // Inclure la bibliothèque pour std::setprecision
 #include <sstream> // Inclure la bibliothèque pour std::ostringstream
 
-bool Init::menu(sf::RenderWindow& window) {
+bool Init::menu(sf::RenderWindow& window,int* i) {
 	
     sf::Font font;
     if (!font.loadFromFile("Ecriture.ttf")) {
@@ -96,13 +96,13 @@ bool Init::menu(sf::RenderWindow& window) {
                 if (singlePlayerOption.getGlobalBounds().contains(mousePosition)) {
                     // Logique pour démarrer le jeu en mode un joueur
                     // Exemple : initialiser un seul robot
-                    nbPlayers=1;
+                    *i=1;
 					selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, 5)); 
 					sprite1.setPosition(singlePlayerOption.getPosition() + sf::Vector2f(200, 5));
                 } else if (multiPlayerOption.getGlobalBounds().contains(mousePosition)) {
                     // Logique pour démarrer le jeu en mode deux joueurs
                     // Exemple : initialiser deux robots
-                    nbPlayers=2;
+                    *i=2;
 					selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, -45));
             		sprite1.setPosition(singlePlayerOption.getPosition() + sf::Vector2f(200, 45));
                 } else if (goButton.getGlobalBounds().contains(mousePosition)) {
@@ -146,6 +146,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	res[0]=0;
 	res[1]=0;
 
+
     sf::Font font;
     if (!font.loadFromFile("Ecriture.ttf")) {
         // Gestion de l'erreur si le chargement de la police échoue
@@ -159,21 +160,72 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
     title.setFillColor(sf::Color::White);
 	title.setPosition(window.getSize().x/2-300,200);
 	sf::Text clonetitle(title);
-	clonetitle.setPosition(window.getSize().x/2-300,window.getSize().y-350);
+	clonetitle.setPosition(window.getSize().x/2-300,window.getSize().y-200);
 
     sf::Text Player1;
     Player1.setFont(font);
     Player1.setString("Player 1");
-    Player1.setCharacterSize(20);
+    Player1.setCharacterSize(35);
     Player1.setFillColor(sf::Color::White);
     Player1.setPosition(window.getSize().x/2-250, window.getSize().y/2-100);
 
-    sf::Text Player2;
+
+	sf::Text Player2;
     Player2.setFont(font);
     Player2.setString("Player 2");
-    Player2.setCharacterSize(20);
+    Player2.setCharacterSize(35);
     Player2.setFillColor(sf::Color::White);
     Player2.setPosition(window.getSize().x/2+250, window.getSize().y/2-100);
+
+
+	 sf::Text Stats;
+    Stats.setFont(font);
+    Stats.setString("Statistics : ");
+    Stats.setCharacterSize(20);
+    Stats.setFillColor(sf::Color::White);
+    Stats.setPosition(window.getSize().x/2-250, window.getSize().y/2+100);
+	sf::Text Stats2(Stats);
+	Stats2.setPosition(window.getSize().x/2+250,window.getSize().y/2+100);
+
+
+	sf::Text Life1;
+	Life1.setFont(font);
+    Life1.setString("");
+    Life1.setCharacterSize(20);
+    Life1.setFillColor(sf::Color::White);
+	Life1.setPosition(window.getSize().x/2-250, window.getSize().y/2+120);
+	sf::Text Life2(Life1);
+	Life2.setPosition(window.getSize().x/2+250,window.getSize().y/2+120);
+
+	sf::Text Defense1;
+	Defense1.setFont(font);
+    Defense1.setString("");
+    Defense1.setCharacterSize(20);
+    Defense1.setFillColor(sf::Color::White);
+	Defense1.setPosition(window.getSize().x/2-250, window.getSize().y/2+140);
+	sf::Text Defense2(Defense1);
+	Defense2.setPosition(window.getSize().x/2+250,window.getSize().y/2+140);
+
+	sf::Text Attack1;
+	Attack1.setFont(font);
+    Attack1.setString("");
+    Attack1.setCharacterSize(20);
+    Attack1.setFillColor(sf::Color::White);
+	Attack1.setPosition(window.getSize().x/2-250, window.getSize().y/2+160);
+	sf::Text Attack2(Attack1);
+	Attack2.setPosition(window.getSize().x/2+250,window.getSize().y/2+160);
+
+	sf::Text Speed1;
+	Speed1.setFont(font);
+    Speed1.setString("");
+    Speed1.setCharacterSize(20);
+    Speed1.setFillColor(sf::Color::White);
+	Speed1.setPosition(window.getSize().x/2-250, window.getSize().y/2+180);
+	sf::Text Speed2(Speed1);
+	Speed2.setPosition(window.getSize().x/2+250,window.getSize().y/2+180);
+
+
+    
 
     sf::Text goButton;
     goButton.setFont(font);
@@ -341,6 +393,16 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 		window.draw(RightButton2);
         window.draw(Player2);
         window.draw(goButton);
+		window.draw(Stats);
+        window.draw(Stats2);
+		window.draw(Life1);
+        window.draw(Life2);
+		window.draw(Attack1);
+        window.draw(Attack2);
+		window.draw(Defense1);
+        window.draw(Defense2);
+		window.draw(Speed1);
+        window.draw(Speed2);
 		// Affichage de l'image actuelle
         sprite.setTexture(frames[currentFrame]);
 		sprite.setScale((window.getSize().x)/480,(window.getSize().y)/300);
@@ -353,6 +415,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 		
 		while(res[0]<=0){
 			res[0]=res[0]+3;
+			
 		}
 		while(res[1]<=0){
 			res[1]=res[1]+3;
@@ -360,23 +423,49 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
         if(res[0]%3==0){
 			res[0]=3;
 			window.draw(course1);
+			Life1.setString("Life : 100");
+			Defense1.setString("Defense : 25");
+			Speed1.setString("Speed : 15");
+			Attack1.setString("Attack : 25");
+		
 			}
 		else if(res[0]%3==1){
 			res[0]=1;
-			window.draw(sniper1);}
+			window.draw(sniper1);
+			Life1.setString("Life : 100");
+			Defense1.setString("Defense : 10");
+			Speed1.setString("Speed : 5");
+			Attack1.setString("Attack : 50");
+			}
 		else{
 			res[0]=2;
-			window.draw(tank1);}
+			window.draw(tank1);
+			Life1.setString("Life : 200");
+			Defense1.setString("Defense : 40");
+			Speed1.setString("Speed : 2");
+			Attack1.setString("Attack : 25");}
 
 		if(res[1]%3==0){
 			res[1]=3;
-			window.draw(course2);}
+			window.draw(course2);
+			Life2.setString("Life : 100");
+			Defense2.setString("Defense : 25");
+			Speed2.setString("Speed : 15");
+			Attack2.setString("Attack : 25");}
 		else if(res[1]%3==1){
 			res[1]=1;
-			window.draw(sniper2);}
+			window.draw(sniper2);
+			Life2.setString("Life : 100");
+			Defense2.setString("Defense : 10");
+			Speed2.setString("Speed : 5");
+			Attack2.setString("Attack : 50");}
 		else{
 			res[1]=2;
-			window.draw(tank2);}
+			window.draw(tank2);
+			Life2.setString("Life : 200");
+			Defense2.setString("Defense : 40");
+			Speed2.setString("Speed : 2");
+			Attack2.setString("Attack : 25");}
         window.display();
     }
 	

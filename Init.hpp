@@ -23,7 +23,7 @@ class Init {
 		};
 
 		
-		bool menu(sf::RenderWindow& window);
+		bool menu(sf::RenderWindow& window,int* i);
 		bool choose(sf::RenderWindow& window,int* res);
 		bool fin= false;
 

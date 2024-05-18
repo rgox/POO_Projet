@@ -17,37 +17,40 @@ int main() {
     const sf::Time timePerMove = sf::milliseconds(50);  // Définir l'intervalle de mise à jour
 	Hexagone hexagon(window.getSize().x, window.getSize().y);
     /// Appliquez un décalage vers le centre pour chaque robot
-	sf::Vector2f pos1 = hexagon.getPoint(0);
-	sf::Vector2f pos3 = hexagon.getPoint(3);
-
+	int nbplay=0;
 	Robot* rob1 = nullptr;
 	Robot* rob2 = nullptr;
     Init debut;
 	int res[2];
-    while (debut.menu(window)) {}
+    while (debut.menu(window,&nbplay)) {}
 
     if (!debut.fin) {
 		if(debut.choose(window,res)){
-			printf("res[0]= %d; res[1]=%d\n",res[0],res[1]);
-		if(res[0]==0 | res[1]==0) {
-			return 0;}
-		if(res[0]==1)rob1=new Sniper (hexagon,600,window.getSize().y,'A',sf::Color::Red);
-		if(res[0]==2)rob1=new Tank (hexagon,600,window.getSize().y,'A',sf::Color::Red);
-		if(res[0]==3)rob1= new Course (hexagon,600,window.getSize().y,'A',sf::Color::Red);
-		if(res[1]==1)rob2=new Sniper (hexagon,600,window.getSize().y,'A',sf::Color::Red);
-		if(res[2]==2)rob2=new Tank (hexagon,600,window.getSize().y,'A',sf::Color::Red);
-		if(res[3]==3)rob2= new Course (hexagon,600,window.getSize().y,'A',sf::Color::Red);
-		printf("Peut-être \n");
-		Affiche aff(hexagon, *rob1, *rob2);
-		printf("ICI");
-        while (aff.refresh(window, timePerMove, clock, event)) {
-            aff.updateControls(*rob1);
-            if (aff.getNbPlayers() == 2) {
-                aff.updateControls(*rob2);
-            }
-			(*rob1).updateProjectiles(window);
-    		(*rob2).updateProjectiles(window);
-        }
+			if((res[0]==0) | (res[1]==0)) {
+				return 0;}
+			if(res[0]==1)rob1=new Sniper (hexagon,600,window.getSize().y/2,'A',sf::Color::Red);
+			if(res[0]==2)rob1=new Tank (hexagon,600,window.getSize().y/2,'A',sf::Color::Red);
+			if(res[0]==3)rob1= new Course (hexagon,600,window.getSize().y/2,'A',sf::Color::Red);
+			if(res[1]==1)rob2=new Sniper (hexagon,800,window.getSize().y/2,'B',sf::Color::Blue);
+			if(res[1]==2)rob2=new Tank (hexagon,800,window.getSize().y/2,'B',sf::Color::Blue);
+			if(res[1]==3)rob2= new Course (hexagon,800,window.getSize().y/2,'B',sf::Color::Blue);
+			if (!rob1 || !rob2) {
+				if(!rob1){
+				std::cerr << "Erreur lors de l'initialisation de rob 1" << std::endl;}
+				if(!rob2){
+				std::cerr << "Erreur lors de l'initialisation de rob 2" << std::endl;}
+				return 1;
+			}
+			Affiche aff(hexagon, *rob1, *rob2);
+			aff.set_nbPlayers(nbplay);
+			while (aff.refresh(window, timePerMove, clock, event)) {
+				aff.updateControls(*rob1);
+				if (aff.getNbPlayers() == 2) {
+					aff.updateControls(*rob2);
+				}
+				(*rob1).updateProjectiles(window);
+				(*rob2).updateProjectiles(window);
+			}
     }
 	}
 	delete rob1;
