@@ -18,14 +18,14 @@ private:
     int apptime = 10;
 
 public:
-    Bonus(Hexagone& arene) {
+    Bonus(Hexagone& arene,const sf::RenderWindow& window) {
         // Initialiser le générateur de nombres pseudo-aléatoires avec le temps actuel
         srand(static_cast<unsigned int>(time(nullptr)));
 
         // Générer une position aléatoire dans l'hexagone
         do {
-            position.x = static_cast<float>(rand() % 800); // Position x aléatoire dans une fenêtre de 800x600
-            position.y = static_cast<float>(rand() % 600); // Position y aléatoire dans une fenêtre de 800x600
+            position.x = static_cast<float>(rand() % window.getSize().x); // Position x aléatoire dans les limites de la fenêtre
+            position.y = static_cast<float>(rand() % window.getSize().y); // Position y aléatoire dans une fenêtre de 800x600
         } while (!arene.isInside(position.x, position.y));
 
         // Créer une forme aléatoire (dans cet exemple, un cercle, un rectangle ou un triangle)

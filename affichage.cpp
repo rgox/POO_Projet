@@ -248,8 +248,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 		sf::Texture texture;
 		if (!texture.loadFromFile("batterie.png") ) {
-			// Gestion de l'erreur si le chargement de la texture échoue
-			return EXIT_FAILURE;
+		// Gestion de l'erreur si le chargement de la texture échoue
+		return EXIT_FAILURE;
 		}
 		sf::Sprite sprite1;
 		sprite1.setTexture(texture);
@@ -258,25 +258,21 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		sprite1.setPosition(3,10);
 		cloneSprite1.setPosition(window.getSize().x-100,10);
 		// Créer un rectangle shape
-    	sf::RectangleShape batterie1(sf::Vector2f(150, 150)); // Définir la taille du carré (largeur x hauteur)
-    
-    	// Définir la position du carré
+		sf::RectangleShape batterie1(sf::Vector2f(150, 150)); // Définir la taille du carré (largeur x hauteur)
+		// Définir la position du carré
 		batterie1.setPosition(5, 35); // Coordonnées x et y du coin supérieur gauche du carré
-		
 		// Définir la couleur du carré
 		batterie1.setFillColor(sf::Color::Green); // Choisir une couleur, ici bleu
 
 		// Créer un rectangle shape
-    	sf::RectangleShape batterie2(sf::Vector2f(35, 85)); // Définir la taille du carré (largeur x hauteur)
-    
-    // Définir la position deu carré
+		sf::RectangleShape batterie2(sf::Vector2f(35, 85)); // Définir la taille du carré (largeur x hauteur)
+		// Définir la position deu carré
 		batterie2.setPosition(window.getSize().x-100, 35); // Coordonnées x et y du coin supérieur gauche du carré
-		
 		// Définir la couleur du carré
 		batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
 
-	int initialHealth1=P1.getHealth();
-	int initialHealth2=P2.getHealth();
+		int initialHealth1=P1.getHealth();
+		int initialHealth2=P2.getHealth();
 
 		
 //################################################################################################################
@@ -291,26 +287,62 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
         }
 
         // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
-        if (clock.getElapsedTime() >= timePerMove) {
-            if (nbPlayers == 2) {
-                P1.update(window, P2);
-                P2.update(window, P1);
+if (clock.getElapsedTime() >= timePerMove) {
+if (nbPlayers == 2) {
+P1.update(window,P2);
+P2.update(window,P1);
 
-                // Vérification des collisions entre les robots
-                P1.handleCollision(P2);
-                P2.handleCollision(P1);
-            } else {
-                P1.update(window, P2);
+// Vérification des collisions entre les robots
+P1.handleCollision(P2);
+P2.handleCollision(P1);
 
-                // Vérification des collisions entre les robots
-                P1.handleCollision(P2);
-            }
-            clock.restart(); // Redémarrer l'horloge après chaque mise à jour
-        }
+//#####Adaptation des barres de vie en fonction des hp des joueurs########
+batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth()/initialHealth1*100)));
+batterie1.setPosition(5,35+(100-P1.getHealth()/initialHealth1*100));
+
+batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
+batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
+
+VieP1.setString(std::to_string(P1.getHealth()));
+VieP2.setString(std::to_string(P2.getHealth()));
+
+DefenseP1.setString( std::to_string(P1.getDefense()) );
+DefenseP2.setString( std::to_string(P2.getDefense()) );
+
+oss.str("");
+oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
+SpeedP1.setString(oss.str());
+
+oss.str("");
+oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
+SpeedP2.setString(oss.str());
+} else {
+P1.update(window,P2);
+
+// Vérification des collisions entre les robots
+P1.handleCollision(P2);
+
+batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
+batterie1.setPosition(5,35+(100-P1.getHealth()));
+
+batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
+batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
+
+VieP1.setString(std::to_string(P1.getHealth()));
+
+DefenseP1.setString( std::to_string(P1.getDefense()) );
+DefenseP2.setString( std::to_string(P2.getDefense()) );
+
+oss.str("");
+oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
+SpeedP1.setString(oss.str());
+}
+clock.restart(); // Redémarrer l'horloge après chaque mise à jour
+}
 
         // Apparition aléatoire des bonus
-        if (rand() % 100 < 0.1) { // Ajustez la probabilité d'apparition des bonus
-            bonuses.push_back(Bonus(hexagon));
+        if (bonuses.size() < 3 && rand() % 100 < 0.001) { // Ajustez la probabilité d'apparition des bonus
+            bonuses.push_back(Bonus(hexagon,window));
         }
 
         // Gestion des collisions des robots avec les bonus
