@@ -42,6 +42,7 @@ class Affiche {
 		sf::Texture texture;
 		sf::Sprite sprite;
 		int nbPlayers=0;
+		std::vector<Bonus> bonuses;
 		
 };
 
