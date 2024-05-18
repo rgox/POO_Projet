@@ -33,8 +33,10 @@ int main() {
             if (aff.getNbPlayers() == 2) {
                 aff.updateControls(robot2);
             }
-			snip.updateProjectiles(window);
-    		robot2.updateProjectiles(window);
+            snip.update(window, robot2);
+            if (aff.getNbPlayers() == 2) {
+                robot2.update(window, snip);
+            }
         }
     }
 

@@ -282,7 +282,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 //################################################################################################################
 
     
-    while (window.isOpen()) {
+        while (window.isOpen()) {
         // Gestion des événements
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -293,67 +293,65 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
         // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
         if (clock.getElapsedTime() >= timePerMove) {
             if (nbPlayers == 2) {
-                P1.update(window);
-                P2.update(window);
+                P1.update(window, P2);
+                P2.update(window, P1);
 
                 // Vérification des collisions entre les robots
                 P1.handleCollision(P2);
                 P2.handleCollision(P1);
-
-				//#####Adaptation des barres de vie en fonction des hp des joueurs########
-				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth()/initialHealth1*100)));
-				batterie1.setPosition(5,35+(100-P1.getHealth()/initialHealth1*100));
-
-				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
-				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
-
-				VieP1.setString(std::to_string(P1.getHealth()));
-				VieP2.setString(std::to_string(P2.getHealth()));
-
-				DefenseP1.setString( std::to_string(P1.getDefense()) );
-				DefenseP2.setString( std::to_string(P2.getDefense()) );
-
-				oss.str("");
-				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
-				SpeedP1.setString(oss.str());
-
-				oss.str("");
-				oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
-				SpeedP2.setString(oss.str());
-						
             } else {
-                P1.update(window);
+                P1.update(window, P2);
 
                 // Vérification des collisions entre les robots
                 P1.handleCollision(P2);
-
-				batterie1.setSize(sf::Vector2f(80, 160-(100-P1.getHealth())));
-				batterie1.setPosition(5,35+(100-P1.getHealth()));
-
-				batterie2.setSize(sf::Vector2f(80, 160-(100-P2.getHealth()/initialHealth2*100)));
-				batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
-
-				VieP1.setString(std::to_string(P1.getHealth()));
-
-				DefenseP1.setString( std::to_string(P1.getDefense()) );
-				DefenseP2.setString( std::to_string(P2.getDefense()) );
-
-				oss.str("");
-				oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
-				SpeedP1.setString(oss.str());
             }
-            clock.restart();  // Redémarrer l'horloge après chaque mise à jour
+            clock.restart(); // Redémarrer l'horloge après chaque mise à jour
         }
-		// Définir le rectangle source dans la texture de l'image
-		
-		
-		
-		
-		window.clear(sf::Color::White);
-		
-        hexagon.drawHexagon(window, sf::Color::Red); 
-        P1.draw(window);  // Dessiner le premier robot
-		if(nbPlayers==2) P2.draw(window);  // Dessiner le deuxième robot
+
+        // Apparition aléatoire des bonus
+        if (rand() % 100 < 0.1) { // Ajustez la probabilité d'apparition des bonus
+            bonuses.push_back(Bonus(hexagon));
+        }
+
+        // Gestion des collisions des robots avec les bonus
+        for (auto it = bonuses.begin(); it != bonuses.end(); ) {
+            if (P1.get_Shape().getGlobalBounds().intersects(it->getCircleShape().getGlobalBounds()) ||
+                P1.get_Shape().getGlobalBounds().intersects(it->getRectangleShape().getGlobalBounds()) ||
+                P1.get_Shape().getGlobalBounds().intersects(it->getTriangleShape().getGlobalBounds())) {
+                // Appliquer le bonus au robot P1
+                if (it->getBonusType() == 1) {
+                    P1.setHealth(P1.getHealth() + it->getValue());
+                }
+                // Ajoutez d'autres types de bonus ici
+                it = bonuses.erase(it); // Supprimer le bonus une fois collecté
+            } else if (nbPlayers == 2 &&
+                (P2.get_Shape().getGlobalBounds().intersects(it->getCircleShape().getGlobalBounds()) ||
+                P2.get_Shape().getGlobalBounds().intersects(it->getRectangleShape().getGlobalBounds()) ||
+                P2.get_Shape().getGlobalBounds().intersects(it->getTriangleShape().getGlobalBounds()))) {
+                // Appliquer le bonus au robot P2
+                if (it->getBonusType() == 1) {
+                    P2.setHealth(P2.getHealth() + it->getValue());
+                }
+                // Ajoutez d'autres types de bonus ici
+                it = bonuses.erase(it); // Supprimer le bonus une fois collecté
+            } else {
+                ++it;
+            }
+        }
+
+        // Effacement de la fenêtre
+        window.clear(sf::Color::White);
+
+        // Dessiner tout ce qui doit être affiché
+        hexagon.drawHexagon(window, sf::Color::Red);
+        P1.draw(window); // Dessiner le premier robot
+        if (nbPlayers == 2) P2.draw(window); // Dessiner le deuxième robot
+
+        // Dessiner les bonus
+        for (const auto& bonus : bonuses) {
+            bonus.drawBonus(window);
+        }
+
 		window.draw(batterie1);
         window.draw(sprite1);
 
@@ -367,7 +365,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		window.draw(VieP1);
 		window.draw(VieP2);
 		window.draw(sprite3);
-		window.draw(cloneSprite3);
+		window.draw(cloneSprite3); 	
 		window.draw(DefenseP1);
 		window.draw(DefenseP2);
 		window.draw(SpeedP1);
@@ -384,14 +382,28 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
                 projectile.draw(window);
             }
         }
+		// Affichage des barres de vie
+        sf::RectangleShape batterie1(sf::Vector2f(80, 160 * P1.getHealth() / 100.0f));
+        batterie1.setPosition(5, 35 + (100 - P1.getHealth()));
+        batterie1.setFillColor(sf::Color::Green);
+        window.draw(batterie1);
+        window.draw(sprite1);
+
+        sf::RectangleShape batterie2(sf::Vector2f(80, 160 * P2.getHealth() / 100.0f));
+        batterie2.setPosition(window.getSize().x - 95, 35 + (100 - P2.getHealth()));
+        batterie2.setFillColor(sf::Color::Green);
+        window.draw(batterie2);
+        window.draw(cloneSprite1);
+
 
 		window.display();
 		
-		}
+    }
 
-	return false	  ;
+    return false;
 }
 
+ 
 void Affiche::updateControls(Robot& robot) {
     if (robot.getControlScheme() == 'A') {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) robot.moveForward();

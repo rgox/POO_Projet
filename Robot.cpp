@@ -206,7 +206,7 @@ void Robot::rotateRight() {
     }
 }
 
-void Robot::update(sf::RenderWindow& window) {
+void Robot::update(sf::RenderWindow& window, Robot& other) {
     saveLastPosition();
     if (controlScheme == 'A') {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) moveForward();
@@ -222,7 +222,7 @@ void Robot::update(sf::RenderWindow& window) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) fire();
     }
 
-    updateProjectiles(window);
+    updateProjectiles(window, other);
 }
 
 void Robot::handleCollision(Robot& other) {
@@ -292,41 +292,7 @@ void Robot::ensureInsideBoundary() {
 
 
 
-void Robot::handleCollision(Bonus& bonus) {
 
-    // Obtenir les limites globales des formes
-    sf::FloatRect robotBounds = get_Shape().getGlobalBounds();
-    sf::FloatRect bonusBounds;
-
-    if (bonus.get_shape() == "circle") {
-        // Obtenir les limites globales du cercle
-        sf::FloatRect circleBounds = bonus.get_circleShape().getGlobalBounds();
-
-        // Vérifier la collision entre le robot et le cercle
-        if (robotBounds.intersects(circleBounds)) {
-            revertToLastPosition(); // Revenir à la dernière position sûre
-            // Autres actions à effectuer en cas de collision avec un cercle
-        }
-    } else if (bonus.get_shape() == "rectangle") {
-        // Obtenir les limites globales du rectangle
-        sf::FloatRect rectangleBounds = bonus.get_rectangleShape().getGlobalBounds();
-
-        // Vérifier la collision entre le robot et le rectangle
-        if (robotBounds.intersects(rectangleBounds)) {
-            revertToLastPosition(); // Revenir à la dernière position sûre
-            // Autres actions à effectuer en cas de collision avec un rectangle
-        }
-    } else if (bonus.get_shape() == "triangle") {
-        // Obtenir les limites globales du triangle
-        sf::FloatRect triangleBounds = bonus.get_triangleShape().getGlobalBounds();
-
-        // Vérifier la collision entre le robot et le triangle
-        if (robotBounds.intersects(triangleBounds)) {
-            revertToLastPosition(); // Revenir à la dernière position sûre
-            // Autres actions à effectuer en cas de collision avec un triangle
-        }
-    }
-}
 
 void Robot::draw(sf::RenderWindow& window) {
     window.draw(rectangleShape);
@@ -388,10 +354,10 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
 }
 
 void Robot::fire() {
-    projectiles.emplace_back(position.x, position.y, orientation, 5.0f); 
+    projectiles.emplace_back(position.x, position.y, orientation, 15.0f); 
 }
 
-void Robot::updateProjectiles(sf::RenderWindow& window) {
+void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
     for (auto& projectile : projectiles) {
         projectile.update();
     }
@@ -399,8 +365,15 @@ void Robot::updateProjectiles(sf::RenderWindow& window) {
     // Supprimer les projectiles qui sont hors de l'écran
     projectiles.erase(
         std::remove_if(projectiles.begin(), projectiles.end(),
-            [&window](const Projectile& projectile) {
-                return projectile.isOffScreen(window);
+            [this, &other](const Projectile& projectile) {
+                if (!hexagon.isInside(projectile.getPosition().x, projectile.getPosition().y)) {
+                    return true;
+                }
+                if (other.get_Shape().getGlobalBounds().contains(projectile.getPosition())) {
+                    other.setHealth(other.getHealth() - this->attackPower);
+                    return true;
+                }
+                return false;
             }),
         projectiles.end()
     );
