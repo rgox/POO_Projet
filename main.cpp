@@ -15,7 +15,8 @@ int main() {
         return 1;
     }
 
-    while (window.isOpen()) {
+	bool running = true;
+    while (running) {
         // Afficher le menu principal
         Init debut;
         int nbplay = 0;
@@ -86,6 +87,11 @@ int main() {
         rob2 = nullptr;
         player1 = nullptr;
         player2 = nullptr;
+
+		// Vérifier si la fenêtre a été fermée
+        if (!window.isOpen()) {
+            running = false;
+        }
     }
 
     return 0;
