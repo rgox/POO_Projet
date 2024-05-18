@@ -63,6 +63,12 @@ std::vector<LineSegment> Robot::getLineSegments() const {
 void Robot::setHealth(int newHealth) {
     health = newHealth;
 }
+void Robot::setSpeed(int newSpeed){
+	speed = newSpeed;
+}
+void Robot::setDefense(int newDefense){
+	defense = newDefense;
+};
 
 void Robot::moveUp() {
     float newY = position.y - speed;
@@ -165,7 +171,6 @@ bool Robot::isTouchingBoundary() const {
     for (const auto& corner : corners) {
 		for(int i=-margin ; i<margin;i++){
 			if (!hexagon.isInside(corner.x - margin, corner.y - margin)) {
-				printf("aaaaaaaaaaaaaaaaaaaaah \n");
             	return true;
 		}
         

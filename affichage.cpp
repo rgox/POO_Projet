@@ -215,7 +215,13 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
                 P1.get_Shape().getGlobalBounds().intersects(it->getTriangleShape().getGlobalBounds())) {
                 // Appliquer le bonus au robot P1
                 if (it->getBonusType() == 1) {
-                    P1.setHealth(P1.getHealth() + it->getValue());
+                    P1.setHealth(P1.getHealth() + 10);
+                }
+				if (it->getBonusType() == 2) {
+                    P1.setSpeed(P1.getSpeed() + 5);
+                }
+				if (it->getBonusType() == 3) {
+                    P1.setDefense(P1.getDefense() + 10);
                 }
                 // Ajoutez d'autres types de bonus ici
                 it = bonuses.erase(it); // Supprimer le bonus une fois collecté
@@ -225,7 +231,13 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
                 P2.get_Shape().getGlobalBounds().intersects(it->getTriangleShape().getGlobalBounds()))) {
                 // Appliquer le bonus au robot P2
                 if (it->getBonusType() == 1) {
-                    P2.setHealth(P2.getHealth() + it->getValue());
+                    P2.setHealth(P2.getHealth() + 10);
+                }
+				if (it->getBonusType() == 2) {
+                    P2.setSpeed(P2.getSpeed() + 5);
+                }
+				if (it->getBonusType() == 3) {
+                    P2.setDefense(P2.getDefense() + 10);
                 }
                 // Ajoutez d'autres types de bonus ici
                 it = bonuses.erase(it); // Supprimer le bonus une fois collecté

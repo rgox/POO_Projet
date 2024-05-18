@@ -14,7 +14,6 @@ private:
     sf::ConvexShape triangleShape;
     std::string shape;
     int type = rand() % 4 + 1;
-    int value = rand() % 10 + 1;
     int apptime = 10;
 
 public:
@@ -35,7 +34,7 @@ public:
                 circleShape.setRadius(20);
                 circleShape.setFillColor(sf::Color::Green);
                 circleShape.setOutlineThickness(2);
-                circleShape.setOutlineColor(sf::Color::Black);
+                circleShape.setOutlineColor(sf::Color::Green);
                 circleShape.setOrigin(20, 20); // Origine au centre du cercle
                 circleShape.setPosition(position);
                 shape = "cercle";
@@ -44,7 +43,7 @@ public:
                 rectangleShape.setSize(sf::Vector2f(40, 40));
                 rectangleShape.setFillColor(sf::Color::Blue);
                 rectangleShape.setOutlineThickness(2);
-                rectangleShape.setOutlineColor(sf::Color::Black);
+                rectangleShape.setOutlineColor(sf::Color::Blue);
                 rectangleShape.setOrigin(20, 20); // Origine au centre du rectangle
                 rectangleShape.setPosition(position);
                 shape = "rectangle";
@@ -56,7 +55,7 @@ public:
                 triangleShape.setPoint(2, sf::Vector2f(-20, 20));
                 triangleShape.setFillColor(sf::Color::Red);
                 triangleShape.setOutlineThickness(2);
-                triangleShape.setOutlineColor(sf::Color::Black);
+                triangleShape.setOutlineColor(sf::Color::Red);
                 triangleShape.setOrigin(0, 0); // Origine au centre du triangle
                 triangleShape.setPosition(position);
                 shape = "triangle";
@@ -72,7 +71,6 @@ public:
 
     // Getters pour les propriétés du bonus
     int getBonusType() const { return type; }
-    int getValue() const { return value; }
 
     void drawBonus(sf::RenderWindow& window) const {
         if (circleShape.getRadius() != 0) {

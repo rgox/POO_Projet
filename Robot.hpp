@@ -82,6 +82,8 @@ public:
 
 
     void setHealth(int newHealth);
+	void setSpeed(int newSpeed);
+	void setDefense(int newDefense);
 
 	void update(sf::RenderWindow& window, Robot& other);
 	void handleCollision(Robot& other);
