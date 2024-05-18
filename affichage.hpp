@@ -35,8 +35,10 @@ class Affiche {
 
 	private:
 		Hexagone& hexagon;
+		
     	Robot& P1;
     	Robot& P2;
+
 		sf::Texture texture;
 		sf::Sprite sprite;
 		int nbPlayers=0;

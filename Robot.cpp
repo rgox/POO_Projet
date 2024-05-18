@@ -14,6 +14,12 @@ Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color colo
 		rectangleShape.setOrigin(width/2,height/2);
 		rectangleShape.setPosition(position);
 		rectangleShape.setRotation(orientation * 180 / M_PI); // Initialiser l'orientation
+		sf::Font font;
+		if (!font.loadFromFile("Ecriture.ttf")) {
+			std::cerr << "Failed to load Robot font" << std::endl;
+		}
+		name.setString("");
+		name.setFont(font);
 		}
 
 // Destructeur

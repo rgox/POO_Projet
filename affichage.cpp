@@ -16,13 +16,13 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 			return false;
 		}
 		//Joueur P1
-		sf::Text NomP1;
-    	NomP1.setFont(font);
-		NomP1.setString("Enbrrr");
-		NomP1.setCharacterSize(70);
-		NomP1.setFillColor(sf::Color::Black);
-		NomP1.setPosition(100, 10);
-
+		
+		
+		P1.get_name().setCharacterSize(70);
+		
+		P1.get_name().setFillColor(sf::Color::Black);
+		P1.setNamePosition(100, 10);
+		
 		sf::Text VieP1;
     	VieP1.setFont(font);
 		VieP1.setString( std::to_string(P1.getHealth()) );
@@ -48,13 +48,11 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 
 		//Joueur P2
-		sf::Text NomP2;
-    	NomP2.setFont(font);
-		NomP2.setString("Hassoul");
-		NomP2.setCharacterSize(70);
-		NomP2.setFillColor(sf::Color::Black);
-		NomP2.setPosition(window.getSize().x-400, 10);
-
+		P2.get_name().setFont(font);
+		P2.get_name().setCharacterSize(70);
+		P2.get_name().setFillColor(sf::Color::Black);
+		P2.setNamePosition(window.getSize().x-400, 10);
+		
 		sf::Text VieP2;
     	VieP2.setFont(font);
 		VieP2.setString(std::to_string(P2.getHealth()));
@@ -224,8 +222,9 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 
 		window.draw(cloneSprite1);
 		
-		window.draw(NomP1);
-		window.draw(NomP2);
+			
+		window.draw(P1.get_name_draw());
+		window.draw(P2.get_name_draw());
 
 		window.draw(VieP1);
 		window.draw(VieP2);

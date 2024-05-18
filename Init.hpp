@@ -9,6 +9,7 @@
 #include "Robot.hpp"
 #include "arene.hpp"
 #include "bonus.hpp"
+#include "InputBox.hpp"
 
 class Init {
 	public:
@@ -25,6 +26,7 @@ class Init {
 		
 		bool menu(sf::RenderWindow& window,int* i);
 		bool choose(sf::RenderWindow& window,int* res);
+		bool name(sf:: RenderWindow& window, char*& player1Name, char*& player2Name);
 		bool fin= false;
 
 	

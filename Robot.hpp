@@ -10,7 +10,7 @@ class Projectile;
 class Robot {
 public:
     // Constructeur
-	Robot();
+
     Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color);
 	
 	
@@ -99,6 +99,23 @@ public:
         }
     }
 
+	void set_name(const std::string& n, sf::Font& font) {
+        name.setString(n);
+        name.setFont(font);
+        name.setCharacterSize(70); // Définir la taille du texte
+        name.setFillColor(sf::Color::Black);}
+	
+	sf::Text get_name(){
+		return name;
+	}
+
+	void setNamePosition(float x, float y) {
+        name.setPosition(x, y);
+    }
+
+	const sf::Text& get_name_draw() const {
+        return name;
+    }
 	sf::Vector2f getTransformedPoint(float offsetX, float offsetY) const;
 
 	// Nouvelle méthode pour dessiner les points de débogage
@@ -108,6 +125,7 @@ protected:
 
 	Hexagone& hexagon;
     sf::Vector2f position;
+	sf::Text name;
     int health=10;       // Santé actuelle du robot
     float speed=10;      // Vitesse de déplacement du robot
     int attackPower;  // Puissance d'attaque

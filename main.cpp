@@ -9,6 +9,11 @@
 #include "Init.hpp"
 
 int main() {
+	sf::Font font;
+        if (!font.loadFromFile("Ecriture.ttf")) {
+            std::cerr << "Failed to load font" << std::endl;
+            return false;
+        }
 	sf::Event event;
     srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -20,10 +25,12 @@ int main() {
 	int nbplay=0;
 	Robot* rob1 = nullptr;
 	Robot* rob2 = nullptr;
+	char* player1;
+    char* player2;
     Init debut;
 	int res[2];
     while (debut.menu(window,&nbplay)) {}
-
+	if(debut.name(window,player1,player2)){
     if (!debut.fin) {
 		if(debut.choose(window,res)){
 			if((res[0]==0) | (res[1]==0)) {
@@ -41,7 +48,12 @@ int main() {
 				std::cerr << "Erreur lors de l'initialisation de rob 2" << std::endl;}
 				return 1;
 			}
+			
+			rob1->set_name(player1,font);
+			rob2->set_name(player2,font);
+			
 			Affiche aff(hexagon, *rob1, *rob2);
+			
 			aff.set_nbPlayers(nbplay);
 			while (aff.refresh(window, timePerMove, clock, event)) {
 				aff.updateControls(*rob1);
@@ -52,6 +64,7 @@ int main() {
 				(*rob2).updateProjectiles(window);
 			}
     }
+	}
 	}
 	delete rob1;
 	delete rob2;
