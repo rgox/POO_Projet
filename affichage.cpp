@@ -133,8 +133,8 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 		// Définir la couleur du carré
 		batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
 
-		int initialHealth1=P1.getHealth();
-		int initialHealth2=P2.getHealth();
+		int initialHealth1= P1.getHealth();
+		int initialHealth2= P2.getHealth();
 
 		
 //################################################################################################################
@@ -192,7 +192,14 @@ oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiff
 SpeedP1.setString(oss.str());
 }
 clock.restart(); // Redémarrer l'horloge après chaque mise à jour
+
 }
+
+	if (P1.getHealth() <= 0 || P2.getHealth() <= 0) {
+		std::string winner = P1.getHealth() <= 0 ? P2.get_name().getString() : P1.get_name().getString();
+		showEndMessage(window, winner);
+		return true; // Fin de la partie
+	}
 
         // Apparition aléatoire des bonus
         if (bonuses.size() < 3 && rand() % 100 < 0.001) { // Ajustez la probabilité d'apparition des bonus
@@ -285,13 +292,16 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 		
         if(P1.getHealth()>initialHealth1)initialHealth1=P1.getHealth();
 		if(P2.getHealth()>initialHealth2)initialHealth2=P2.getHealth();
-			//#####Adaptation des barres de vie en fonction des hp des joueurs########
-		
-		batterie1.setSize(sf::Vector2f(80, 160-(160-P1.getHealth()/initialHealth1*160)));
-		batterie1.setPosition(5,35+(100-P1.getHealth()/initialHealth1*100));
+	
+		// Mise à jour des barres de vie
+        float healthPercentageP1 = static_cast<float>(P1.getHealth()) / initialHealth1;
+        float healthPercentageP2 = static_cast<float>(P2.getHealth()) / initialHealth2;
 
-		batterie2.setSize(sf::Vector2f(80, 160-(160-P2.getHealth()/initialHealth2*160)));
-		batterie2.setPosition(window.getSize().x-95,35+(100-P2.getHealth()/initialHealth2*100));
+        batterie1.setSize(sf::Vector2f(80, 160 * healthPercentageP1));
+        batterie1.setPosition(5, 35 + (160 - 160 * healthPercentageP1));
+
+        batterie2.setSize(sf::Vector2f(80, 160 * healthPercentageP2));
+        batterie2.setPosition(window.getSize().x - 95, 35 + (160 - 160 * healthPercentageP2));
 
         window.draw(batterie1);
         window.draw(sprite1);
@@ -322,5 +332,41 @@ void Affiche::updateControls(Robot& robot) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) robot.rotateLeft();
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) robot.rotateRight();
     }
+}
+
+void Affiche::showEndMessage(sf::RenderWindow& window, const std::string& winner) {
+    // Effacer la fenêtre
+    window.clear(sf::Color::White);
+
+    // Charger la police
+    sf::Font font;
+    if (!font.loadFromFile("Ecriture.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+        return;
+    }
+
+    // Créer le texte de fin de partie
+    sf::Text endText;
+    endText.setFont(font);
+    endText.setString("Game Over! Gagnant : " + winner);
+    endText.setCharacterSize(100);
+    endText.setFillColor(sf::Color::Black);
+    endText.setPosition(window.getSize().x / 4, window.getSize().y / 2);
+
+    // Dessiner le texte de fin de partie
+    window.draw(endText);
+    window.display();
+
+    // Attendre quelques secondes avant de revenir au menu
+    sf::Clock clock;
+    while (clock.getElapsedTime().asSeconds() < 3.0f) {
+		sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+				return;
+            }
+    	}
+	}
 }
 

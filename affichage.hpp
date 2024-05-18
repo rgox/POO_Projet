@@ -32,6 +32,9 @@ class Affiche {
 		void set_nbPlayers(int i){nbPlayers=i;}
     	void updateControls(Robot& robot);
 		int getNbPlayers() const { return nbPlayers; }
+		void showEndMessage(sf::RenderWindow& window, const std::string& winner);
+		void resetRobots();
+		void showEndMatchMessage(sf::RenderWindow& window, const std::string& winner);
 
 	private:
 		Hexagone& hexagon;
@@ -43,6 +46,9 @@ class Affiche {
 		sf::Sprite sprite;
 		int nbPlayers=0;
 		std::vector<Bonus> bonuses;
+		
+		int P1Wins = 0;
+    	int P2Wins = 0;
 		
 };
 

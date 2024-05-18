@@ -365,7 +365,7 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
 }
 
 void Robot::fire() {
-    projectiles.emplace_back(position.x, position.y, orientation, 15.0f); 
+    projectiles.emplace_back(position.x, position.y, orientation, 20.0f); 
 }
 
 void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
@@ -381,7 +381,7 @@ void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
                     return true;
                 }
                 if (other.get_Shape().getGlobalBounds().contains(projectile.getPosition())) {
-                    other.setHealth(other.getHealth() - this->attackPower);
+                    other.setHealth(other.getHealth() - this->attackPower * 0.5);
                     return true;
                 }
                 return false;
