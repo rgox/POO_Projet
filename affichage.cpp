@@ -348,13 +348,19 @@ void Affiche::showEndMessage(sf::RenderWindow& window, const std::string& winner
     // Créer le texte de fin de partie
     sf::Text endText;
     endText.setFont(font);
-    endText.setString("Game Over! Gagnant : " + winner);
+    endText.setString("Game Over!");
+	
     endText.setCharacterSize(100);
     endText.setFillColor(sf::Color::Black);
-    endText.setPosition(window.getSize().x / 4, window.getSize().y / 2);
+    endText.setPosition(window.getSize().x / 4+100, window.getSize().y / 2-150);
+	sf::Text endText2(endText);
+	endText2.setString("Gagnant : " + winner);
+	endText2.setFillColor(sf::Color::Red);
+    endText2.setPosition(window.getSize().x / 4+100, window.getSize().y / 2+50);
 
     // Dessiner le texte de fin de partie
     window.draw(endText);
+	window.draw(endText2);
     window.display();
 
     // Attendre quelques secondes avant de revenir au menu
