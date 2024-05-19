@@ -36,12 +36,12 @@ int main() {
                     }
                     Hexagone hexagon(window.getSize().x, window.getSize().y);
 
-                    if (res[0] == 1) rob1 = new Sniper(hexagon, 600, window.getSize().y / 2, 'A', sf::Color::Red);
+                    if (res[0] == 1) rob1 = new Sniper(hexagon, 600 , window.getSize().y / 2, 'A', sf::Color::Red);
                     if (res[0] == 2) rob1 = new Tank(hexagon, 600, window.getSize().y / 2, 'A', sf::Color::Red);
-                    if (res[0] == 3) rob1 = new Course(hexagon, 600, window.getSize().y / 2, 'A', sf::Color::Red);
-                    if (res[1] == 1) rob2 = new Sniper(hexagon, 800, window.getSize().y / 2, 'B', sf::Color::Blue);
-                    if (res[1] == 2) rob2 = new Tank(hexagon, 800, window.getSize().y / 2, 'B', sf::Color::Blue);
-                    if (res[1] == 3) rob2 = new Course(hexagon, 800, window.getSize().y / 2, 'B', sf::Color::Blue);
+                    if (res[0] == 3) rob1 = new Course(hexagon,600 , window.getSize().y / 2, 'A', sf::Color::Red);
+                    if (res[1] == 1) rob2 = new Sniper(hexagon, 1200, window.getSize().y / 2, 'B', sf::Color::Blue);
+                    if (res[1] == 2) rob2 = new Tank(hexagon, 1200, window.getSize().y / 2, 'B', sf::Color::Blue);
+                    if (res[1] == 3) rob2 = new Course(hexagon,1200 , window.getSize().y / 2, 'B', sf::Color::Blue);
 
                     if (!rob1 || !rob2) {
                         if (!rob1) {
@@ -55,6 +55,7 @@ int main() {
 
                     rob1->set_name(player1, font);
                     rob2->set_name(player2, font);
+					rob2->set_Orientation(rob2->get_Orientation()+3.1415);
 
                     Affiche aff(hexagon, *rob1, *rob2);
                     aff.set_nbPlayers(nbplay);

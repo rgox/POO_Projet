@@ -316,7 +316,7 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 		
     }
 
-    return false;
+    return true;
 }
 
  

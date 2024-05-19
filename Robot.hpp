@@ -125,6 +125,13 @@ public:
 	// Nouvelle méthode pour dessiner les points de débogage
     void drawDebugPoints(sf::RenderWindow& window);
 
+	void set_Orientation(float newOrientation){
+		orientation = newOrientation;
+	}
+
+	float get_Orientation(){
+		return orientation ;
+	}
 	const std::vector<Projectile>& getProjectiles() const { return projectiles; }
     std::vector<Projectile>& getProjectiles() { return projectiles; }
 
