@@ -17,7 +17,8 @@ Projet réalisé par: Benjamin VERSEILS et Javier PARDO OLIAS.
 	-cstdio
 
 ## Comment compiler le programme:	
-	-Accéder depuis votre terminal au dossier où vous avez téléchargé les fichiers depuis le terminal.
+	-Clonez le projet: git clone https://github.com/rgox/POO_Projet.git
+	-Accéder depuis votre terminal au dossier où vous avez téléchargé les fichiers ou cloné le dépôt.
 	-Tapez la commande "make start" dans le terminal.
 	-Profitez du gameplay!!
 
