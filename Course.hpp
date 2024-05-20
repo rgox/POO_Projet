@@ -5,15 +5,16 @@
 
 class Course : public Robot {
 public:
-    Course(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
-        : Robot(hex, x, y, controlScheme, color) {
-        // Ajustez les attributs existants ici si nécessaire
-        health = 100;
-        speed = 15;
-        attackPower = 25;
-        defense = 25;
-
-        // Charger la texture une seule fois
+    Course(Arene& hex, float x, float y, char controlScheme, sf::Color color) :
+        Robot(hex, x, y, controlScheme, color) {
+            
+			// Nouveaux attributs
+			health = 100;
+            speed = 15;
+			attackPower=25;
+			defense=25;
+			
+        // Charger la texture
         if (!texture1.loadFromFile("course.png")) {
             // Gestion de l'erreur si le chargement de la texture échoue
             printf("Problème chargement image Course");

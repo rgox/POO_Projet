@@ -5,10 +5,10 @@
 
 class Tank : public Robot {
 public:
-    Tank(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
+    Tank(Arene& hex, float x, float y, char controlScheme, sf::Color color)
         : Robot(hex, x, y, controlScheme, color) {
-        // Ajustez les attributs existants ici si nécessaire
-        health = 200;
+            // Nouveaux attributs
+            health = 200;
             speed = 2;
 			attackPower=25;
 			defense=40;

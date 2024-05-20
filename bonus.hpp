@@ -17,7 +17,10 @@ private:
     int apptime = 10;
 
 public:
-    Bonus(Hexagone& arene, const sf::RenderWindow& window) {
+    Bonus(Arene& arene,const sf::RenderWindow& window) {
+        // Initialiser le générateur de nombres pseudo-aléatoires avec le temps actuel
+        srand(static_cast<unsigned int>(time(nullptr)));
+
         // Générer une position aléatoire dans l'hexagone
         do {
             position.x = static_cast<float>(rand() % window.getSize().x); // Position x aléatoire dans les limites de la fenêtre
@@ -70,6 +73,7 @@ public:
     // Getters pour les propriétés du bonus
     int getBonusType() const { return type; }
 
+	//Dessine la forme du bonus
     void drawBonus(sf::RenderWindow& window) const {
         if (shape == "cercle") {
             window.draw(circleShape);
@@ -80,6 +84,7 @@ public:
         }
     }
 
+	//Getter de la position du bonus
     sf::Vector2f getPosition() const { return position; }
 };
 

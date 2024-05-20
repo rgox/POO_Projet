@@ -1,5 +1,6 @@
 #include "Projectile.hpp"
 
+//Constructeur
 Projectile::Projectile(float x, float y, float speed, float orientation) 
 	: x(x), y(y), angle(orientation), speed(speed){
     if (!texture.loadFromFile("projectile.png")) {
@@ -26,27 +27,34 @@ Projectile::Projectile(float x, float y, float speed, float orientation)
     velocity.y = speed * std::sin(orientation);
 }
 
+
+//Mets à jour la position du projectile en fonction de sa vitesse
 void Projectile::update() {
     sprite.move(velocity);
 }
 
+//Dessine le projectile
 void Projectile::draw(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
+//Retourne les points de atteints par l'image
 sf::FloatRect Projectile::getBounds() const {
     return sprite.getGlobalBounds();
 }
 
+//Retourne la position de la forme
 sf::Vector2f Projectile::getPosition() const {
     return sprite.getPosition();
 }
 
+//Détecte si le projectile est en dehors de l'écran
 bool Projectile::isOffScreen(const sf::RenderWindow& window) const {
     sf::Vector2f pos = sprite.getPosition();
     return pos.x < 0 || pos.x > window.getSize().x || pos.y < 0 || pos.y > window.getSize().y;
 }
 
+//Détecte si le missile touche le bord de l'image ou pas 
 bool Projectile::isTouchingBorder(const sf::RenderWindow& window) const {
     sf::Vector2f pos = sprite.getPosition();
     sf::FloatRect bounds = sprite.getGlobalBounds();

@@ -7,13 +7,14 @@
 #include "geometry.hpp"
 
 
-class Hexagone {
+class Arene {
 private:
     sf::Vector2f points[7];
 
 public:
-	Hexagone() {};
-    Hexagone(int windowWidth, int windowHeight) {
+	//Constructeurs
+	Arene() {};
+    Arene(int windowWidth, int windowHeight) {
 		float radius = std::min(windowWidth, windowHeight) * 0.5f; // 50% of the smallest dimension
 		float centerX = windowWidth / 2.0f;
 		float centerY = windowHeight / 2.0f;
@@ -25,23 +26,23 @@ public:
 		points[6] = points[0]; // Close the hexagon
 	}
 
+	//Méthode permettant de savoir si un point est à l'interieur
     bool isInside(float x, float y) const ;
 
+	//Dessine l'Hexagone
     void drawHexagon(sf::RenderWindow& window, const sf::Color& color) const ;
+	//Getters
+	std::vector<LineSegment> getHexagonSegments() const;
+	sf::Vector2f getCenter() const;
+	float getRadius() const;
 
-	// Ajout pour récupérer un point spécifique
+	// Getter d'un point spécifique
     sf::Vector2f getPoint(int index) const {
         if (index >= 0 && index < 6) {
             return points[index];
         }
         return sf::Vector2f(0, 0); // Retourne un point nul si l'index est hors limites
     }
-
-	std::vector<LineSegment> getHexagonSegments() const;
-
-	sf::Vector2f getCenter() const;
-	float getRadius() const;
-
 };
 
 #endif // ARENE_HPP
