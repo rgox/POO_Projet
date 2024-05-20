@@ -1,22 +1,23 @@
-#ifndef TANK_HPP
-#define TANK_HPP
+#ifndef SNIPER_HPP
+#define SNIPER_HPP
 
 #include "Robot.hpp"
 
-class Tank : public Robot {
+class Sniper : public Robot {
 public:
-    Tank(Arene& hex, float x, float y, char controlScheme, sf::Color color)
+    Sniper(Arene& hex, float x, float y, char controlScheme, sf::Color color)
         : Robot(hex, x, y, controlScheme, color) {
-            // Nouveaux attributs
-            health = 200;
-            speed = 2;
-			attackPower=25;
-			defense=40;
+        
+		// Nouveaux attributs
+       		health = 100;
+            speed = 5;
+			attackPower=50;
+			defense=10;
 
         // Charger la texture une seule fois
-        if (!texture1.loadFromFile("Tank.png")) {
+        if (!texture1.loadFromFile("sniper.png")) {
             // Gestion de l'erreur si le chargement de la texture échoue
-            printf("Problème chargement image Tank");
+            printf("Problème chargement image Sniper");
         }
 
         sprite1.setTexture(texture1);
@@ -38,4 +39,4 @@ private:
     sf::Sprite sprite1;
 };
 
-#endif // TANK_HPP
+#endif // SNIPER_HPP

@@ -1,12 +1,18 @@
 #include <algorithm>
 #include <cmath>
 #include "Robot.hpp"
-#include "geometry.hpp"
+//#include "geometry.hpp"
 #include "Projectile.hpp"
 
 // Constructeur
-Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
-: hexagon(hex), position(x,y),  controlScheme(controlScheme),orientation(0.0f){
+Robot::Robot(Arene& hex, float x, float y, char controlScheme, sf::Color color)
+    : hexagon(hex), position(x, y), name(), health(10), speed(10),
+      attackPower(0), defense(0), lastPosX(0.0f), lastPosY(0.0f),
+      rectangleShape(), controlScheme(controlScheme), color(color),
+      width(40), height(30), lastValidPosition(0.0f, 0.0f),
+      orientation(0.0f), lastOrientation(0.0f), projectiles(),
+      missilesFiredThisSecond(0) {
+		//Forme rectangulaire permettant de dessiner schématiquement le robot
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
 		rectangleShape.setOutlineThickness(2);
@@ -20,17 +26,47 @@ Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color colo
 		}
 		name.setString("");
 		name.setFont(font);
+
+		//Vérifie que la texture des projectiles est load
+		if (!Projectile::loadTexture()) {
+			std::cerr << "Failed to load projectile texture" << std::endl;
+		}
 		}
 
 // Destructeur
-
 Robot::~Robot() {}
 
+// Méthodes
+// Setters
 void Robot::setPosition(float x, float y) {
     position.x = x;
     position.y = y;
 	rectangleShape.setPosition(x, y);
 }
+void Robot::setHealth(int newHealth) {
+    health = newHealth;
+}
+void Robot::setSpeed(int newSpeed){
+	speed = newSpeed;
+}
+void Robot::setDefense(int newDefense){
+	defense = newDefense;
+};
+
+
+void Robot::set_Orientation(float newOrientation){
+		orientation = newOrientation;
+	}
+
+void Robot::set_name(const std::string& n, sf::Font& font) {
+        name.setString(n);
+        name.setFont(font);
+        name.setCharacterSize(70); // Définir la taille du texte
+        name.setFillColor(sf::Color::Black);}
+
+void Robot::setNamePosition(float x, float y) {
+        name.setPosition(x, y);
+    }
 
 // Getters
 float Robot::getX() const {
@@ -49,6 +85,7 @@ float Robot::getSpeed() const {
     return speed;
 }
 
+//Retourne les segments du carré représentant le hit box de notre robot
 std::vector<LineSegment> Robot::getLineSegments() const {
     std::vector<LineSegment> segments;
     
@@ -65,45 +102,7 @@ std::vector<LineSegment> Robot::getLineSegments() const {
     return segments;
 }
 
-// Setters
-void Robot::setHealth(int newHealth) {
-    health = newHealth;
-}
-void Robot::setSpeed(int newSpeed){
-	speed = newSpeed;
-}
-void Robot::setDefense(int newDefense){
-	defense = newDefense;
-};
-
-void Robot::moveUp() {
-    float newY = position.y - speed;
-    if (canMove(position.x, newY)) {
-        position.y = newY;
-    }
-}
-
-void Robot::moveDown() {
-    float newY = position.y + speed;
-    if (canMove(position.x, newY)) {
-        position.y = newY;
-    }
-}
-
-void Robot::moveLeft() {
-    float newX = position.x - speed;
-    if (canMove(newX, position.y)) {
-        position.x = newX;
-    }
-}
-
-void Robot::moveRight() {
-    float newX = position.x + speed;
-    if (canMove(newX, position.y)) {
-        position.x = newX;
-    }
-}
-
+//Fait que le robot bouge vers l'avant
 void Robot::moveForward() {
     saveLastPosition();
     float newX = position.x + speed * std::cos(orientation);
@@ -120,10 +119,8 @@ void Robot::moveForward() {
     }
 }
 
-bool Robot::checkCollision(const Robot& other) const {
-    return rectangleShape.getGlobalBounds().intersects(other.rectangleShape.getGlobalBounds());
-}
 
+//Fait que le robot bouge vers l'arrière
 void Robot::moveBackward() {
     saveLastPosition();
     float newX = position.x - speed * std::cos(orientation);
@@ -141,6 +138,38 @@ void Robot::moveBackward() {
 }
 
 
+//Rotation vers la gauche
+void Robot::rotateLeft() {
+    saveLastOrientation();
+    float newOrientation = orientation - 0.1f; // Ajustez cette valeur pour la vitesse de rotation
+    rectangleShape.setRotation(newOrientation * 180 / M_PI);
+    if (!isInsideBoundary()) {
+        revertToLastOrientation();
+    } else {
+        orientation = newOrientation;
+    }
+}
+
+
+//Rotation vers la droite
+void Robot::rotateRight() {
+    saveLastOrientation();
+    float newOrientation = orientation + 0.1f; // Ajustez cette valeur pour la vitesse de rotation
+    rectangleShape.setRotation(newOrientation * 180 / M_PI);
+    if (!isInsideBoundary()) {
+        revertToLastOrientation();
+    } else {
+        orientation = newOrientation;
+    }
+}
+
+//Détecte s'il y a une collision entre notre Robot et un autre Robot
+bool Robot::checkCollision(const Robot& other) const {
+    return rectangleShape.getGlobalBounds().intersects(other.rectangleShape.getGlobalBounds());
+}
+
+
+//Détecte si notre Robot est dans les marges de notre hexagone
 bool Robot::isInsideBoundary() const {
     const float margin = 2.0f; // Marge de sécurité en pixels
     sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
@@ -154,17 +183,7 @@ bool Robot::isInsideBoundary() const {
            hexagon.isInside(bottomRight.x + margin, bottomRight.y + margin);
 }
 
-void Robot::rotateLeft() {
-    saveLastOrientation();
-    float newOrientation = orientation - 0.1f; // Ajustez cette valeur pour la vitesse de rotation
-    rectangleShape.setRotation(newOrientation * 180 / M_PI);
-    if (!isInsideBoundary()) {
-        revertToLastOrientation();
-    } else {
-        orientation = newOrientation;
-    }
-}
-
+//Détect s'il y a un contact entre les coins du Robot et l'hexagone
 bool Robot::isTouchingBoundary() const {
     const int margin = 20; // Marge de sécurité en pixels
     sf::Vector2f corners[] = {
@@ -185,6 +204,8 @@ bool Robot::isTouchingBoundary() const {
     return false;
 }
 
+
+//Oriente les Robots aillant touché les bords vers le centre de l'arène
 void Robot::repositionToCenter() {
     const float offset = 10.0f; // Distance à quelques pixels du mur
     sf::Vector2f center = hexagon.getCenter();
@@ -206,17 +227,7 @@ void Robot::repositionToCenter() {
 
 
 
-void Robot::rotateRight() {
-    saveLastOrientation();
-    float newOrientation = orientation + 0.1f; // Ajustez cette valeur pour la vitesse de rotation
-    rectangleShape.setRotation(newOrientation * 180 / M_PI);
-    if (!isInsideBoundary()) {
-        revertToLastOrientation();
-    } else {
-        orientation = newOrientation;
-    }
-}
-
+//Met à jour le mouvement de la voiture dépendant de la touche que l'utilisateur appuie
 void Robot::update(sf::RenderWindow& window, Robot& other) {
     saveLastPosition();
     if (controlScheme == 'A') {
@@ -236,6 +247,8 @@ void Robot::update(sf::RenderWindow& window, Robot& other) {
     handleCollision(window, other);
 }
 
+
+//Détecte si'il y a contact entre les deux voitures et applique un recul en fonction du type de voiture
 void Robot::handleCollision(Robot& other) {
     if (checkCollision(other)) {
         // Calculer la direction de recul basée sur l'orientation des robots
@@ -266,6 +279,8 @@ void Robot::handleCollision(Robot& other) {
     }
 }
 
+
+//Détecte si après une collision la voiture reste dans la zone, si non elle annule le recul
 void Robot::ensureInsideBoundary() {
     const float margin = 2.0f; // Marge de sécurité en pixels
     std::vector<LineSegment> robotSegments = getLineSegments();
@@ -300,11 +315,7 @@ void Robot::ensureInsideBoundary() {
     }
 }
 
-
-
-
-
-
+// Dessine le robot
 void Robot::draw(sf::RenderWindow& window) {
     window.draw(rectangleShape);
 
@@ -313,6 +324,8 @@ void Robot::draw(sf::RenderWindow& window) {
     }
 }
 
+
+// Calcul le point suivant dépendant de l'orientation de notre robot
 sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
     float cosAngle = std::cos(orientation);
     float sinAngle = std::sin(orientation);
@@ -324,6 +337,8 @@ sf::Vector2f Robot::getTransformedPoint(float offsetX, float offsetY) const {
     return sf::Vector2f(x, y);
 }
 
+
+//Calcule si le robot va pouvoir bouger dans sa position suivante
 bool Robot::canMove(float newX, float newY) {
     const float margin = 1.0f; // Marge de sécurité en pixels
 
@@ -340,6 +355,8 @@ bool Robot::canMove(float newX, float newY) {
            hexagon.isInside(newBottomRight.x + margin, newBottomRight.y + margin);
 }
 
+
+// Dessine les points limites, permet de débugger le hitbox
 void Robot::drawDebugPoints(sf::RenderWindow& window) {
     // Calculer les positions des coins
     sf::Vector2f topLeft = getTransformedPoint(-width / 2, -height / 2);
@@ -364,28 +381,38 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
     window.draw(pointShape);
 }
 
+//Tire les projectiles
 void Robot::fire() {
-    projectiles.emplace_back(position.x, position.y, orientation, 20.0f); 
-}
+    sf::Time elapsedTime = fireClock.getElapsedTime();
 
-void Robot::handleCollision(sf::RenderWindow& window, Robot& other) {
-    for (auto& projectile : projectiles) {
-        projectile.update();
+    // Reset le compteur toute les secondes
+    if (elapsedTime.asSeconds() >= 1.0f) {
+        missilesFiredThisSecond = 0;
+        fireClock.restart();
     }
 
-    // Supprimer les projectiles qui sont hors de l'écran
-    projectiles.erase(
-        std::remove_if(projectiles.begin(), projectiles.end(),
-            [this, &other](const Projectile& projectile) {
-                if (!hexagon.isInside(projectile.getPosition().x, projectile.getPosition().y)) {
-                    return true;
-                }
-                if (other.get_Shape().getGlobalBounds().contains(projectile.getPosition())) {
-                    other.setHealth(other.getHealth() - this->attackPower * 0.5);
-                    return true;
-                }
-                return false;
-            }),
-        projectiles.end()
-    );
+    //vérifie que l'on peut tirer
+    if (missilesFiredThisSecond < maxMissilesPerSecond) {
+        projectiles.emplace_back(position.x, position.y, 20.0f, orientation);
+        missilesFiredThisSecond++;
+    }
+}
+
+// Met à jour la position des projectiles lancés par le robot
+void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
+    // Utiliser un itérateur pour traverser les projectiles et les supprimer en toute sécurité
+    for (auto it = projectiles.begin(); it != projectiles.end();) {
+        it->update();
+
+        // Supprimer les projectiles hors de l'écran ou ayant touché l'autre robot
+        if (!hexagon.isInside(it->getPosition().x, it->getPosition().y) || 
+            other.get_Shape().getGlobalBounds().contains(it->getPosition())) {
+            if (other.get_Shape().getGlobalBounds().contains(it->getPosition())) {
+                other.setHealth(other.getHealth() - this->attackPower * 0.5);
+            }
+            it = projectiles.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }

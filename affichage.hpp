@@ -12,41 +12,48 @@
 
 class Affiche {
 	public:
-	
-		Affiche(Hexagone& hexagone, Robot& rob1, Robot& rob2)
+		//Constructeur
+		Affiche(Arene& hexagone, Robot& rob1, Robot& rob2)
     : hexagon(hexagone), P1(rob1), P2(rob2) {
 
-			this->texture.loadFromFile("background.jpg");
-			if (!texture.loadFromFile("background.jpg")) {
+			this->texture.loadFromFile("background.png");
+			if (!texture.loadFromFile("background.png")) {
 				// Gestion de l'erreur si le chargement de la texture échoue
 				std::cout << "Erreur de chargement de l'image" << std::endl;
 			}
 			this->sprite.setTexture(texture);
 		};
 
-		
+		//Méthode refresh
 		bool refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event);
 		
-		bool fin= false;
-
-		void set_nbPlayers(int i){nbPlayers=i;}
-    	void updateControls(Robot& robot);
+		//Getter du nombre de joueurs
 		int getNbPlayers() const { return nbPlayers; }
+
+		//Setter du nombre de joueurs
+		void set_nbPlayers(int i){nbPlayers=i;}
+
+		//Met à jour la position des robots
+    	void updateControls(Robot& robot);
+
+		//Permet d'afficher un message de fin lorsqu'un joueur meurt
 		void showEndMessage(sf::RenderWindow& window, const std::string& winner);
-		void resetRobots();
-		void showEndMatchMessage(sf::RenderWindow& window, const std::string& winner);
+		
 
 	private:
-		Hexagone& hexagon;
+		Arene& hexagon;
 		
     	Robot& P1;
-    	Robot& P2;
-
-		sf::Texture texture;
-		sf::Sprite sprite;
-		int nbPlayers=0;
+		Robot& P2;
+		sf::Font font;
+		sf::Texture texture3, texture4, texture;
+		sf::Sprite sprite3, sprite4, sprite;
+		sf::Text VieP1, SpeedP1, DefenseP1;
+		sf::Text VieP2, SpeedP2, DefenseP2;
+		int nbPlayers;
 		std::vector<Bonus> bonuses;
-		
+		int initialHealth1, initialHealth2;
+		//Au cas où on décide de faire un jeu en 3 manches
 		int P1Wins = 0;
     	int P2Wins = 0;
 		
