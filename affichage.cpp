@@ -48,6 +48,13 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 	DefenseP1.setPosition(100, 200);
 
 
+	sf::Text AttackP1;
+	AttackP1.setFont(font);
+	AttackP1.setString( std::to_string(P1.getAttack()) );
+	AttackP1.setCharacterSize(50);	
+	AttackP1.setFillColor(sf::Color::Black);
+	AttackP1.setPosition(100, 260);
+
 	//Joueur P2
 	P2.get_name().setFont(font);
 	P2.get_name().setCharacterSize(70);
@@ -76,6 +83,13 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 	DefenseP2.setCharacterSize(50);
 	DefenseP2.setFillColor(sf::Color::Black);
 	DefenseP2.setPosition(window.getSize().x-400, 200);
+
+	sf::Text AttackP2;
+	AttackP2.setFont(font);
+	AttackP2.setString( std::to_string(P2.getAttack()) );
+	AttackP2.setCharacterSize(50);	
+	AttackP2.setFillColor(sf::Color::Black);
+	AttackP2.setPosition(window.getSize().x-400, 260);
 
 	//background
 	sf::Texture texture10;
@@ -113,6 +127,31 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 	sf::Sprite cloneSprite4(sprite4);
 	sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(140, 10));
 	cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(140, 10));
+
+	sf::Texture texture5;
+	if (!texture5.loadFromFile("shield.png") ) {
+		// Gestion de l'erreur si le chargement de la texture échoue
+		return EXIT_FAILURE;
+	}
+	sf::Sprite sprite5;
+	sprite5.setTexture(texture5);
+	sprite5.setScale(0.04,0.04);
+	sf::Sprite cloneSprite5(sprite5);
+	sprite5.setPosition(DefenseP1.getPosition() + sf::Vector2f(80, 10));
+	cloneSprite5.setPosition(DefenseP2.getPosition() + sf::Vector2f(80, 10));
+
+	sf::Texture texture6;
+	if (!texture6.loadFromFile("attack.png") ) {
+		// Gestion de l'erreur si le chargement de la texture échoue
+		return EXIT_FAILURE;
+	}
+	sf::Sprite sprite6;
+	sprite6.setTexture(texture6);
+	sprite6.setScale(0.2,0.2);
+	sf::Sprite cloneSprite6(sprite6);
+	sprite6.setPosition(AttackP1.getPosition() + sf::Vector2f(80, 10));
+	cloneSprite6.setPosition(AttackP2.getPosition() + sf::Vector2f(80, 10));
+
 
 
 	//######## Barres de Vie ##########
@@ -279,10 +318,16 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 		window.draw(cloneSprite3); 	
 		window.draw(DefenseP1);
 		window.draw(DefenseP2);
+		window.draw(AttackP1);
+		window.draw(AttackP2);
 		window.draw(SpeedP1);
 		window.draw(SpeedP2);
 		window.draw(sprite4);
 		window.draw(cloneSprite4);
+		window.draw(sprite5);
+		window.draw(cloneSprite5);
+		window.draw(sprite6);
+		window.draw(cloneSprite6);
 		
 		// Dessiner les projectiles
         for (auto& projectile : P1.getProjectiles()) {

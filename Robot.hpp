@@ -38,6 +38,7 @@ class Robot {
 		float getSpeed() const;
 		float getWidth() const {return this->width;}
 		int getDefense() const {return this->defense;}
+		int getAttack() const {return this->attackPower;}
 		float getHeight() const {return this->height;}
 		float getOrientation() const { return orientation; }
 		float get_Orientation(){ return orientation ;}
