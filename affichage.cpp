@@ -9,6 +9,7 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 //###########################################################################################################
     // Effacement de la fenêtre
     window.clear();
+	
 
 	//Initialisation de la Police
 
@@ -76,6 +77,15 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 	DefenseP2.setFillColor(sf::Color::Black);
 	DefenseP2.setPosition(window.getSize().x-400, 200);
 
+	//background
+	sf::Texture texture10;
+	if (!texture10.loadFromFile("background.png") ) {
+		// Gestion de l'erreur si le chargement de la texture échoue
+		return EXIT_FAILURE;
+	}
+	sf::Sprite sprite10;
+	sprite10.setTexture(texture10);
+		
 	//Petit coeur
 	sf::Texture texture3;
 	if (!texture3.loadFromFile("life.png") ) {
@@ -147,7 +157,6 @@ bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock&
 			window.close();
 		}
 	}
-
 // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
 if (clock.getElapsedTime() >= timePerMove) {
 if (nbPlayers == 2) {//Deux joueurs
@@ -246,9 +255,13 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 
         // Effacement de la fenêtre
         window.clear(sf::Color::White);
+		
 
         // Dessiner tout ce qui doit être affiché
+
+		window.draw(sprite10);
         hexagon.drawHexagon(window, sf::Color::Red);
+
         P1.draw(window); // Dessiner le premier robot
         if (nbPlayers == 2) P2.draw(window); // Dessiner le deuxième robot
 
@@ -259,6 +272,7 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 
 		
 		//Draw
+		
 		window.draw(P1.get_name_draw());
 		window.draw(P2.get_name_draw());	
 		window.draw(sprite3);
@@ -307,7 +321,6 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
         window.draw(cloneSprite1);
 		window.draw(VieP1);
 		window.draw(VieP2);
-
 		window.display();
 		
     }

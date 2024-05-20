@@ -13,7 +13,7 @@ public:
             speed = 15;
 			attackPower=25;
 			defense=25;
-			
+
         // Charger la texture
         if (!texture1.loadFromFile("course.png")) {
             // Gestion de l'erreur si le chargement de la texture échoue
@@ -32,11 +32,7 @@ public:
         sprite1.setOrigin(textureWidth / 2, textureHeight / 2);
     }
 
-    void draw(sf::RenderWindow& window) override {
-        sprite1.setPosition(position);
-        sprite1.setRotation(orientation * 180 / M_PI);
-        window.draw(sprite1);
-    }
+    void draw(sf::RenderWindow& window) override;
 
 private:
     sf::Texture texture1;

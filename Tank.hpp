@@ -31,11 +31,7 @@ public:
         sprite1.setOrigin(textureWidth / 2, textureHeight / 2);
     }
 
-    void draw(sf::RenderWindow& window) override {
-        sprite1.setPosition(position);
-        sprite1.setRotation(orientation * 180 / M_PI);
-        window.draw(sprite1);
-    }
+    void draw(sf::RenderWindow& window) override;
 
 private:
     sf::Texture texture1;
