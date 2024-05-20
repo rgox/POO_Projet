@@ -14,7 +14,7 @@ public:
 			defense=40;
 
         // Charger la texture une seule fois
-        if (!texture1.loadFromFile("Tank.png")) {
+        if (!texture1.loadFromFile("tank.png")) {
             // Gestion de l'erreur si le chargement de la texture échoue
             printf("Problème chargement image Tank");
         }

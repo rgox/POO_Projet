@@ -399,7 +399,7 @@ void Robot::fire() {
 }
 
 // Met à jour la position des projectiles lancés par le robot
-void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
+void Robot::handleCollision(sf::RenderWindow& window, Robot& other) {
     // Utiliser un itérateur pour traverser les projectiles et les supprimer en toute sécurité
     for (auto it = projectiles.begin(); it != projectiles.end();) {
         it->update();

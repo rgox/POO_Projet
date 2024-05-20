@@ -92,7 +92,7 @@ class Robot {
 
 		//Gestion des Projectiles
 		void fire();//Permet de tirer sur l'adversaire
-		void updateProjectiles(sf::RenderWindow& window, Robot& other);//Mets à jour les projectiles
+		void handleCollision(sf::RenderWindow& window, Robot& other);//Mets à jour les projectiles
 
 
 		//Updater
