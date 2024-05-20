@@ -1,13 +1,13 @@
-#include "Course.hpp"
+#include "Sniper.hpp"
 
 //Définiion de la fonction virtuelle draw
-void Course::draw(sf::RenderWindow& window)  {
+void Sniper::draw(sf::RenderWindow& window)  {
 
 	sf::Texture texture1;
 	 //Chargemnt de l'image
-	if (!texture1.loadFromFile("formula.png") ) {
+	if (!texture1.loadFromFile("police.png") ) {
 		// Gestion de l'erreur si le chargement de la texture échoue
-		printf("Problème chargement image Course");
+		printf("Problème chargement image Sniper");
 	}
 
 	//Définitions des paramètres du personnage

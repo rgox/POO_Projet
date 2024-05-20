@@ -3,16 +3,18 @@
 #include <sstream> // Inclure la bibliothèque pour std::ostringstream
 #include <iostream>
 #include <cstring> // Pour strdup
+
+//Méthode menu
 bool Init::menu(sf::RenderWindow& window,int* i) {
-	
+	//Initialisation de la police
     sf::Font font;
     if (!font.loadFromFile("Ecriture.ttf")) {
         // Gestion de l'erreur si le chargement de la police échoue
         return false;
     }
 	
-    sf::Text title; //on creer le titre
-	
+	//Initialisation et définition des texts à afficher
+    sf::Text title; 
     title.setFont(font);
     title.setString("RobotVroomVromm");
     title.setCharacterSize(70);
@@ -49,7 +51,7 @@ bool Init::menu(sf::RenderWindow& window,int* i) {
     selectionRect.setOutlineColor(sf::Color::Green);
     selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, 5)); // Déplacer le rectangle autour de l'option sélectionnée
 
-	//Indicateur 
+	//Indicateur - Main Robot
 	sf::Texture texture1;
     if (!texture1.loadFromFile("Indicateur.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
@@ -78,8 +80,6 @@ bool Init::menu(sf::RenderWindow& window,int* i) {
     }
 	// Création du sprite pour afficher les images
     sf::Sprite sprite;
-
-    // Boucle de lecture des images
     int currentFrame = 0;
 	sf::Clock clock;
 
@@ -88,6 +88,7 @@ bool Init::menu(sf::RenderWindow& window,int* i) {
         sf::Event event;
         while (window.pollEvent(event)) {
 
+			//Gestion des événnements
             if (event.type == sf::Event::Closed) {
                 window.close();
 				fin=true;
@@ -95,19 +96,17 @@ bool Init::menu(sf::RenderWindow& window,int* i) {
             } else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 if (singlePlayerOption.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour démarrer le jeu en mode un joueur
-                    // Exemple : initialiser un seul robot
+                    // Démarrer le jeu en mode un joueur
                     *i=1;
 					selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, 5)); 
 					sprite1.setPosition(singlePlayerOption.getPosition() + sf::Vector2f(200, 5));
                 } else if (multiPlayerOption.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour démarrer le jeu en mode deux joueurs
-                    // Exemple : initialiser deux robots
+                    // Démarrer le jeu en mode deux jouer
                     *i=2;
 					selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, -45));
             		sprite1.setPosition(singlePlayerOption.getPosition() + sf::Vector2f(200, 45));
                 } else if (goButton.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour lancer le jeu après avoir choisi le mode de jeu
+                    // Lancer le jeu après avoir choisi le mode de jeu
                     return false; // Retourne true pour démarrer le jeu
                 }
             }
@@ -141,19 +140,19 @@ bool Init::menu(sf::RenderWindow& window,int* i) {
     return false; // Retourne false par défaut
 }
 
-
+//Méthode choose
 bool Init::choose(sf::RenderWindow& window,int *res) {
-
+	// Initialisation du résultat
 	res[0]=0;
 	res[1]=0;
 
-
+	//Initialisation de la font
     sf::Font font;
     if (!font.loadFromFile("Ecriture.ttf")) {
         // Gestion de l'erreur si le chargement de la police échoue
         return false;
     }
-	
+	//Textes à afficher
     sf::Text title;
     title.setFont(font);
     title.setString("Choose your player");
@@ -179,7 +178,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
     Player2.setPosition(window.getSize().x/2+250, window.getSize().y/2-100);
 
 
-	 sf::Text Stats;
+	sf::Text Stats;
     Stats.setFont(font);
     Stats.setString("Statistics : ");
     Stats.setCharacterSize(20);
@@ -225,9 +224,6 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	sf::Text Speed2(Speed1);
 	Speed2.setPosition(window.getSize().x/2+250,window.getSize().y/2+180);
 
-
-    
-
     sf::Text goButton;
     goButton.setFont(font);
     goButton.setString("Go !");
@@ -235,7 +231,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
     goButton.setFillColor(sf::Color::White);
     goButton.setPosition(window.getSize().x/2, window.getSize().y/2+20);
 	
-	//Indicateur Gauche
+	//Indicateurs Gauche
 	sf::Texture textLeftButton;
     if (!textLeftButton.loadFromFile("flatDark23.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
@@ -250,7 +246,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	LeftButton2.setScale(1, 1);
 	LeftButton2.setPosition(window.getSize().x/2+150,window.getSize().y/2);
 
-	//Indicateur Droit
+	//Indicateurs Droit
 	sf::Texture textRightButton;
     if (!textRightButton.loadFromFile("flatDark24.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
@@ -266,7 +262,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	RightButton2.setPosition(window.getSize().x/2+350,window.getSize().y/2);
 
 
-	//Sniper
+	//Visuel du sniper
 	sf::Texture police1;
     if (!police1.loadFromFile("police.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
@@ -283,7 +279,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	sniper1.setPosition(window.getSize().x/2-250,window.getSize().y/2);
 	sniper2.setPosition(window.getSize().x/2+250,window.getSize().y/2);
 	
-	//Tank
+	//Visuel du Tank
 	sf::Texture camion1;
     if (!camion1.loadFromFile("truckcabin.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
@@ -300,7 +296,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	tank1.setPosition(window.getSize().x/2-250,window.getSize().y/2);
 	tank2.setPosition(window.getSize().x/2+250,window.getSize().y/2);
  
- 	//Course
+ 	//Visuel de la voiture de Course
 	sf::Texture F1;
     if (!F1.loadFromFile("formula.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
@@ -320,7 +316,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 
 
 
-	//Background
+	//Background comme dans menu
 	// Chargement des images de la séquence vidéo
     std::vector<sf::Texture> frames;
     for (int i = 1; i <= 50; ++i) { // Suppose que vous avez 100 images dans votre séquence
@@ -357,22 +353,15 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
             } else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 if (RightButton1.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour démarrer le jeu en mode un joueur
-                    // Exemple : initialiser un seul robot
                     res[0]=res[0]+1;
                 } else if (LeftButton1.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour démarrer le jeu en mode deux joueurs
-                    // Exemple : initialiser deux robots
-                    res[0]=res[0]+1;
+                    res[0]=res[0]-1;
                 } else if (goButton.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour lancer le jeu après avoir choisi le mode de jeu
+                    // Lancer le jeu après avoir choisi le mode de jeu
                     return true; // Retourne true pour démarrer le jeu
                 }else if (LeftButton2.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour démarrer le jeu en mode deux joueurs
-                    // Exemple : initialiser deux robots
                     res[1]=res[1]-1;
                 } else if (RightButton2.getGlobalBounds().contains(mousePosition)) {
-                    // Logique pour lancer le jeu après avoir choisi le mode de jeu
                     res[1]=res[1]+1;// Retourne true pour démarrer le jeu
                 }
 
@@ -405,6 +394,7 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
         window.draw(Defense2);
 		window.draw(Speed1);
         window.draw(Speed2);
+
 		// Affichage de l'image actuelle
         sprite.setTexture(frames[currentFrame]);
 		sprite.setScale((window.getSize().x)/480,(window.getSize().y)/300);
@@ -414,7 +404,8 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
             currentFrame = (currentFrame + 1) % frames.size();
             clock.restart();
         } 	  
-		
+
+		//Affiche les stats et le visuel de la voiture selectionnée actuellement
 		while(res[0]<=0){
 			res[0]=res[0]+3;
 			
@@ -474,13 +465,16 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
     return false; // Retourne false par défaut
 }
 
-
+//Méthode name
 bool Init::name(sf::RenderWindow& window, char*& player1Name, char*& player2Name) {
+	//Initialisation police
         sf::Font font;
         if (!font.loadFromFile("Ecriture.ttf")) {
             std::cerr << "Failed to load font" << std::endl;
             return false;
         }
+
+	//Initialisation des texts
 		sf::Text Player1;
 		Player1.setFont(font);
 		Player1.setString("Player 1");
@@ -496,11 +490,6 @@ bool Init::name(sf::RenderWindow& window, char*& player1Name, char*& player2Name
 		Player2.setFillColor(sf::Color::White);
 		Player2.setPosition(window.getSize().x/2+300, window.getSize().y/2-100);
 
-        InputBox inputBox1(300, 50, font);
-        inputBox1.setPosition(window.getSize().x/2-500, window.getSize().y/2);
-
-        InputBox inputBox2(300, 50, font);
-        inputBox2.setPosition(window.getSize().x/2+200, window.getSize().y/2);
 
         sf::Text goButton;
         goButton.setFont(font);
@@ -509,6 +498,14 @@ bool Init::name(sf::RenderWindow& window, char*& player1Name, char*& player2Name
         goButton.setFillColor(sf::Color::White);
         goButton.setPosition(window.getSize().x / 2.0f - 50, window.getSize().y / 2.0f + 50);
 
+		//Déclaration des inputbox des noms des joueurs
+		InputBox inputBox1(300, 50, font);
+        inputBox1.setPosition(window.getSize().x/2-500, window.getSize().y/2);
+
+        InputBox inputBox2(300, 50, font);
+        inputBox2.setPosition(window.getSize().x/2+200, window.getSize().y/2);
+
+		//Variable permettant de savoir quel Zone text est séléctionnée
         bool isEnteringPlayer1 = true;
         inputBox1.setFocus(true);
 
@@ -520,13 +517,14 @@ bool Init::name(sf::RenderWindow& window, char*& player1Name, char*& player2Name
 
                 if (event.type == sf::Event::MouseButtonPressed) {
                     sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+					//On écrit sur la Inputbox1
                     if (inputBox1.contains(event.mouseButton.x, event.mouseButton.y)) {
                         inputBox1.setFocus(true);
                         inputBox2.setFocus(false);
-                    } else if (inputBox2.contains(event.mouseButton.x, event.mouseButton.y)) {
+                    } else if (inputBox2.contains(event.mouseButton.x, event.mouseButton.y)) {//On écrit sur la Inputbox2
                         inputBox1.setFocus(false);
                         inputBox2.setFocus(true);
-                    } else if (goButton.getGlobalBounds().contains(mousePosition)) {
+                    } else if (goButton.getGlobalBounds().contains(mousePosition)) {//On appuie sur go
                         player1Name = strdup(inputBox1.getString().c_str());
                         player2Name = strdup(inputBox2.getString().c_str());
                         return true; // Retourne true pour démarrer le jeu
@@ -538,6 +536,8 @@ bool Init::name(sf::RenderWindow& window, char*& player1Name, char*& player2Name
 
                 inputBox1.handleEvent(event);
                 inputBox2.handleEvent(event);
+				
+				//Si on appuiensur enter plutôt que sur GO
 
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
                     if (isEnteringPlayer1) {

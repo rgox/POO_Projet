@@ -3,154 +3,154 @@
 #include <sstream> // Inclure la bibliothèque pour std::ostringstream
 
 
-
+//Méthode refresh
 bool Affiche::refresh(sf::RenderWindow& window, sf::Time timePerMove, sf::Clock& clock, sf::Event& event) {
+
+//###########################################################################################################
     // Effacement de la fenêtre
     window.clear();
 
-		//######## Infos des joueurs ##########
+	//Initialisation de la Police
 
-		sf::Font font;
-		if (!font.loadFromFile("Ecriture.ttf")) {
-			// Gestion de l'erreur si le chargement de la police échoue
-			return false;
-		}
-		//Joueur P1
-		
-		
-		P1.get_name().setCharacterSize(70);
-		
-		P1.get_name().setFillColor(sf::Color::Black);
-		P1.setNamePosition(100, 10);
-		
-		sf::Text VieP1;
-    	VieP1.setFont(font);
-		VieP1.setString( std::to_string(P1.getHealth()) );
-		VieP1.setCharacterSize(50);
-		VieP1.setFillColor(sf::Color::Black);
-		VieP1.setPosition(100, 80);
+	sf::Font font;
+	if (!font.loadFromFile("Ecriture.ttf")) {
+		// Gestion de l'erreur si le chargement de la police échoue
+		return false;
+	}
 
-		sf::Text SpeedP1;
-    	SpeedP1.setFont(font);
-		std::ostringstream oss;
-		oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
-		SpeedP1.setString(oss.str());
-		SpeedP1.setCharacterSize(50);
-		SpeedP1.setFillColor(sf::Color::Black);
-		SpeedP1.setPosition(100, 140);
+	//Joueur P1
+	P1.get_name().setCharacterSize(70);
+	P1.get_name().setFillColor(sf::Color::Black);
+	P1.setNamePosition(100, 10);
+	
+	sf::Text VieP1;
+	VieP1.setFont(font);
+	VieP1.setString( std::to_string(P1.getHealth()) );
+	VieP1.setCharacterSize(50);
+	VieP1.setFillColor(sf::Color::Black);
+	VieP1.setPosition(100, 80);
 
-		sf::Text DefenseP1;
-    	DefenseP1.setFont(font);
-		DefenseP1.setString( std::to_string(P1.getDefense()) );
-		DefenseP1.setCharacterSize(50);
-		DefenseP1.setFillColor(sf::Color::Black);
-		DefenseP1.setPosition(100, 200);
+	sf::Text SpeedP1;
+	SpeedP1.setFont(font);
+	std::ostringstream oss;
+	oss << std::fixed << std::setprecision(2) << P1.getSpeed(); // Limite à 2 chiffres après la virgule
+	SpeedP1.setString(oss.str());
+	SpeedP1.setCharacterSize(50);
+	SpeedP1.setFillColor(sf::Color::Black);
+	SpeedP1.setPosition(100, 140);
+
+	sf::Text DefenseP1;
+	DefenseP1.setFont(font);
+	DefenseP1.setString( std::to_string(P1.getDefense()) );
+	DefenseP1.setCharacterSize(50);
+	DefenseP1.setFillColor(sf::Color::Black);
+	DefenseP1.setPosition(100, 200);
 
 
-		//Joueur P2
-		P2.get_name().setFont(font);
-		P2.get_name().setCharacterSize(70);
-		P2.get_name().setFillColor(sf::Color::Black);
-		P2.setNamePosition(window.getSize().x-400, 10);
-		
-		sf::Text VieP2;
-    	VieP2.setFont(font);
-		VieP2.setString(std::to_string(P2.getHealth()));
-		VieP2.setCharacterSize(50);
-		VieP2.setFillColor(sf::Color::Black);
-		VieP2.setPosition(window.getSize().x-400, 80);
+	//Joueur P2
+	P2.get_name().setFont(font);
+	P2.get_name().setCharacterSize(70);
+	P2.get_name().setFillColor(sf::Color::Black);
+	P2.setNamePosition(window.getSize().x-400, 10);
+	
+	sf::Text VieP2;
+	VieP2.setFont(font);
+	VieP2.setString(std::to_string(P2.getHealth()));
+	VieP2.setCharacterSize(50);
+	VieP2.setFillColor(sf::Color::Black);
+	VieP2.setPosition(window.getSize().x-400, 80);
 
-		sf::Text SpeedP2;
-    	SpeedP2.setFont(font);
-		oss.str("");
-		oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
-		SpeedP2.setString(oss.str());
-		SpeedP2.setCharacterSize(50);
-		SpeedP2.setFillColor(sf::Color::Black);
-		SpeedP2.setPosition(window.getSize().x-400, 140);
+	sf::Text SpeedP2;
+	SpeedP2.setFont(font);
+	oss.str("");
+	oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
+	SpeedP2.setString(oss.str());
+	SpeedP2.setCharacterSize(50);
+	SpeedP2.setFillColor(sf::Color::Black);
+	SpeedP2.setPosition(window.getSize().x-400, 140);
 
-		sf::Text DefenseP2;
-    	DefenseP2.setFont(font);
-		DefenseP2.setString( std::to_string(P2.getDefense()) );
-		DefenseP2.setCharacterSize(50);
-		DefenseP2.setFillColor(sf::Color::Black);
-		DefenseP2.setPosition(window.getSize().x-400, 200);
+	sf::Text DefenseP2;
+	DefenseP2.setFont(font);
+	DefenseP2.setString( std::to_string(P2.getDefense()) );
+	DefenseP2.setCharacterSize(50);
+	DefenseP2.setFillColor(sf::Color::Black);
+	DefenseP2.setPosition(window.getSize().x-400, 200);
 
-		//Petit coeur
-		sf::Texture texture3;
-		if (!texture3.loadFromFile("life.png") ) {
-			// Gestion de l'erreur si le chargement de la texture échoue
-			return EXIT_FAILURE;
-		}
-		sf::Sprite sprite3;
-		sprite3.setTexture(texture3);
-		sf::IntRect textureRect(0, 0, 120, 100); 
-    	sprite3.setTextureRect(textureRect);
-		sprite3.setScale(0.6,0.6);
-		sf::Sprite cloneSprite3(sprite3);
-		sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(80, 0));
-		cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(80, 0));
-
-		//Petit logo de vitesse
-		sf::Texture texture4;
-		if (!texture4.loadFromFile("speed.png") ) {
-			// Gestion de l'erreur si le chargement de la texture échoue
-			return EXIT_FAILURE;
-		}
-		sf::Sprite sprite4;
-		sprite4.setTexture(texture4);
-		sprite4.setScale(0.12,0.12);
-		sf::Sprite cloneSprite4(sprite4);
-		sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(140, 10));
-		cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(140, 10));
-
-
-		//######## Barres de Vie ##########
-
-		sf::Texture texture;
-		if (!texture.loadFromFile("batterie.png") ) {
+	//Petit coeur
+	sf::Texture texture3;
+	if (!texture3.loadFromFile("life.png") ) {
 		// Gestion de l'erreur si le chargement de la texture échoue
 		return EXIT_FAILURE;
-		}
-		sf::Sprite sprite1;
-		sprite1.setTexture(texture);
-		sprite1.setScale(0.15, 0.2);
-		sf::Sprite cloneSprite1(sprite1);
-		sprite1.setPosition(3,10);
-		cloneSprite1.setPosition(window.getSize().x-100,10);
-		// Créer un rectangle shape
-		sf::RectangleShape batterie1(sf::Vector2f(150, 150)); // Définir la taille du carré (largeur x hauteur)
-		// Définir la position du carré
-		batterie1.setPosition(5, 35); // Coordonnées x et y du coin supérieur gauche du carré
-		// Définir la couleur du carré
-		batterie1.setFillColor(sf::Color::Green); // Choisir une couleur, ici bleu
+	}
+	sf::Sprite sprite3;
+	sprite3.setTexture(texture3);
+	sf::IntRect textureRect(0, 0, 120, 100); 
+	sprite3.setTextureRect(textureRect);
+	sprite3.setScale(0.6,0.6);
+	sf::Sprite cloneSprite3(sprite3);
+	sprite3.setPosition(VieP1.getPosition() + sf::Vector2f(80, 0));
+	cloneSprite3.setPosition(VieP2.getPosition() + sf::Vector2f(80, 0));
 
-		
-		// Créer un rectangle shape
-		sf::RectangleShape batterie2(sf::Vector2f(35, 85)); // Définir la taille du carré (largeur x hauteur)
-		// Définir la position deu carré
-		batterie2.setPosition(window.getSize().x-100, 35); // Coordonnées x et y du coin supérieur gauche du carré
-		// Définir la couleur du carré
-		batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
+	//Petit logo de vitesse
+	sf::Texture texture4;
+	if (!texture4.loadFromFile("speed.png") ) {
+		// Gestion de l'erreur si le chargement de la texture échoue
+		return EXIT_FAILURE;
+	}
+	sf::Sprite sprite4;
+	sprite4.setTexture(texture4);
+	sprite4.setScale(0.12,0.12);
+	sf::Sprite cloneSprite4(sprite4);
+	sprite4.setPosition(SpeedP1.getPosition() + sf::Vector2f(140, 10));
+	cloneSprite4.setPosition(SpeedP2.getPosition() + sf::Vector2f(140, 10));
 
-		int initialHealth1= P1.getHealth();
-		int initialHealth2= P2.getHealth();
+
+	//######## Barres de Vie ##########
+
+	sf::Texture texture;
+	if (!texture.loadFromFile("batterie.png") ) {
+	// Gestion de l'erreur si le chargement de la texture échoue
+	return EXIT_FAILURE;
+	}
+	sf::Sprite sprite1;
+	sprite1.setTexture(texture);
+	sprite1.setScale(0.15, 0.2);
+	sf::Sprite cloneSprite1(sprite1);
+	sprite1.setPosition(3,10);
+	cloneSprite1.setPosition(window.getSize().x-100,10);
+	// Créer un rectangle shape
+	sf::RectangleShape batterie1(sf::Vector2f(150, 150)); // Définir la taille du carré (largeur x hauteur)
+	// Définir la position du carré
+	batterie1.setPosition(5, 35); // Coordonnées x et y du coin supérieur gauche du carré
+	// Définir la couleur du carré
+	batterie1.setFillColor(sf::Color::Green); // Choisir une couleur, ici bleu
+
+	
+	// Créer un rectangle shape
+	sf::RectangleShape batterie2(sf::Vector2f(35, 85)); // Définir la taille du carré (largeur x hauteur)
+	// Définir la position deu carré
+	batterie2.setPosition(window.getSize().x-100, 35); // Coordonnées x et y du coin supérieur gauche du carré
+	// Définir la couleur du carré
+	batterie2.setFillColor(sf::Color::Green); // Choisir une couleur, ici verte
+
+	int initialHealth1= P1.getHealth();
+	int initialHealth2= P2.getHealth();
 
 		
 //################################################################################################################
 
-    
-        while (window.isOpen()) {
-        // Gestion des événements
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-        }
+//On vérifie si l'utilisateur n'as pas fermé la fenêtre
+	while (window.isOpen()) {
+	// Gestion des événements
+	while (window.pollEvent(event)) {
+		if (event.type == sf::Event::Closed) {
+			window.close();
+		}
+	}
 
-        // Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
+// Mettre à jour les mouvements des robots seulement quand l'intervalle de temps est atteint
 if (clock.getElapsedTime() >= timePerMove) {
-if (nbPlayers == 2) {
+if (nbPlayers == 2) {//Deux joueurs
 	P1.update(window,P2);
 	P2.update(window,P1);
 
@@ -174,7 +174,7 @@ if (nbPlayers == 2) {
 	oss.str("");
 	oss << std::fixed << std::setprecision(2) << P2.getSpeed(); // Limite à 2 chiffres après la virgule
 	SpeedP2.setString(oss.str());
-} else {
+} else { //Un seul joueur
 P1.update(window,P2);
 
 // Vérification des collisions entre les robots
@@ -258,11 +258,9 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
         }
 
 		
-			
+		//Draw
 		window.draw(P1.get_name_draw());
-		window.draw(P2.get_name_draw());
-
-		
+		window.draw(P2.get_name_draw());	
 		window.draw(sprite3);
 		window.draw(cloneSprite3); 	
 		window.draw(DefenseP1);
@@ -289,7 +287,7 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 				}
 			else{P2.setHealth(0);}}
 		
-		
+		//Actualisation de la vie des joueurs
         if(P1.getHealth()>initialHealth1)initialHealth1=P1.getHealth();
 		if(P2.getHealth()>initialHealth2)initialHealth2=P2.getHealth();
 	
@@ -305,8 +303,6 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
 
         window.draw(batterie1);
         window.draw(sprite1);
-
-        
         window.draw(batterie2);
         window.draw(cloneSprite1);
 		window.draw(VieP1);
@@ -319,7 +315,8 @@ clock.restart(); // Redémarrer l'horloge après chaque mise à jour
     return true;
 }
 
- 
+
+//Méthode de mise à jour de la position des deux robots
 void Affiche::updateControls(Robot& robot) {
     if (robot.getControlScheme() == 'A') {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) robot.moveForward();
@@ -334,6 +331,7 @@ void Affiche::updateControls(Robot& robot) {
     }
 }
 
+//Méthode affichant le nom du vainceur
 void Affiche::showEndMessage(sf::RenderWindow& window, const std::string& winner) {
     // Effacer la fenêtre
     window.clear(sf::Color::White);

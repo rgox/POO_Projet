@@ -6,16 +6,31 @@
 
 class Projectile { 
 public:
+	// Constructeur
     Projectile(float x, float y, float angle, float speed);
-    void update();
-    void draw(sf::RenderWindow& window);
-    sf::FloatRect getBounds() const;
+
+	//Getters
+	sf::FloatRect getBounds() const;
 	sf::Vector2f getPosition() const;
-    bool isOffScreen(const sf::RenderWindow& window) const;
+
+	//Verifiers
+	bool isOffScreen(const sf::RenderWindow& window) const;
 	bool isTouchingBorder(const sf::RenderWindow& window) const;
+	
+	//Met à jour la position
+    void update();
+
+	//Dessine le projectile
+    void draw(sf::RenderWindow& window);
+    
+    
 
 private:
+
+	//Forme du projectile
     sf::CircleShape shape;
+
+	//Vitesse
     sf::Vector2f velocity;
 };
 
