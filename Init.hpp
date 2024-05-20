@@ -6,9 +6,6 @@
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
-#include "Robot.hpp"
-#include "arene.hpp"
-#include "bonus.hpp"
 #include "InputBox.hpp"
 
 class Init {

@@ -68,8 +68,8 @@ int main() {
                         if (aff.getNbPlayers() == 2) {
                             aff.updateControls(*rob2);
                         }
-                        rob1->updateProjectiles(window, *rob2);
-                        rob2->updateProjectiles(window, *rob2);
+                        rob1->handleCollision(window, *rob2);
+                        rob2->handleCollision(window, *rob2);
                     }
 
                     delete rob1;

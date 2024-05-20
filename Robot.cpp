@@ -233,7 +233,7 @@ void Robot::update(sf::RenderWindow& window, Robot& other) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) fire();
     }
 
-    updateProjectiles(window, other);
+    handleCollision(window, other);
 }
 
 void Robot::handleCollision(Robot& other) {
@@ -368,7 +368,7 @@ void Robot::fire() {
     projectiles.emplace_back(position.x, position.y, orientation, 20.0f); 
 }
 
-void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
+void Robot::handleCollision(sf::RenderWindow& window, Robot& other) {
     for (auto& projectile : projectiles) {
         projectile.update();
     }

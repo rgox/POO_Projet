@@ -96,13 +96,13 @@ bool Init::menu(sf::RenderWindow& window,int* i) {
                 sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
                 if (singlePlayerOption.getGlobalBounds().contains(mousePosition)) {
                     // Logique pour démarrer le jeu en mode un joueur
-                    // Exemple : initialiser un seul robot
+
                     *i=1;
 					selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, 5)); 
 					sprite1.setPosition(singlePlayerOption.getPosition() + sf::Vector2f(200, 5));
                 } else if (multiPlayerOption.getGlobalBounds().contains(mousePosition)) {
                     // Logique pour démarrer le jeu en mode deux joueurs
-                    // Exemple : initialiser deux robots
+
                     *i=2;
 					selectionRect.setPosition(singlePlayerOption.getPosition() - sf::Vector2f(27, -45));
             		sprite1.setPosition(singlePlayerOption.getPosition() + sf::Vector2f(200, 45));
