@@ -33,6 +33,10 @@ public:
     }
 
     void draw(sf::RenderWindow& window) override;
+	int getAttackPower() const { return attackPower; }
+    const sf::Texture& getTexture() const { return texture1; }
+    const sf::Sprite& getSprite() const { return sprite1; }
+
 
 private:
     sf::Texture texture1;

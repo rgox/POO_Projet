@@ -1,5 +1,6 @@
-# Nom du fichier exécutable
+# Nom des fichiers exécutables
 TARGET = RobotArena
+TEST_TARGET = TestSuite
 
 # Compilateur C++
 CXX = g++
@@ -7,24 +8,32 @@ CXX = g++
 # Options de compilation
 CXXFLAGS = -std=c++11 -Wall -g
 
-# Dossiers pour les fichiers source
-SRC_DIR = .
-
-# Trouver tous les fichiers source dans le dossier courant
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-
-# Fichiers objets, un pour chaque fichier source
-OBJECTS = $(SOURCES:.cpp=.o)
-
-# Liens vers les bibliothèques de SFML
+# Liens vers les bibliothèques de SFML et Boost.Test
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
+BOOST_LIBS = -lboost_unit_test_framework
 
-# Règle par défaut pour créer l'exécutable
-all: $(TARGET) start #clean
+# Fichiers sources pour l'application principale
+APP_SOURCES = affichage.cpp arene.cpp Course.cpp geometry.cpp Init.cpp Projectile.cpp Robot.cpp Sniper.cpp Tank.cpp main_app.cpp
 
-# Lier les fichiers objets pour créer l'exécutable
-$(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $@ $(SFML_LIBS)
+# Fichiers sources pour les tests
+TEST_SOURCES = Test.cpp main_test.cpp affichage.cpp arene.cpp Course.cpp geometry.cpp Init.cpp Projectile.cpp Robot.cpp Sniper.cpp Tank.cpp
+
+# Fichiers objets pour l'application principale
+APP_OBJECTS = $(APP_SOURCES:.cpp=.o)
+
+# Fichiers objets pour les tests
+TEST_OBJECTS = $(TEST_SOURCES:.cpp=.o)
+
+# Règle par défaut pour créer les exécutables
+all: $(TARGET) $(TEST_TARGET)
+
+# Lier les fichiers objets pour créer l'exécutable principal
+$(TARGET): $(APP_OBJECTS)
+	$(CXX) $(APP_OBJECTS) -o $@ $(SFML_LIBS)
+
+# Lier les fichiers objets pour créer l'exécutable de tests
+$(TEST_TARGET): $(TEST_OBJECTS)
+	$(CXX) $(TEST_OBJECTS) -o $@ $(SFML_LIBS) $(BOOST_LIBS)
 
 # Compilation des fichiers source en fichiers objets
 %.o: %.cpp
@@ -32,7 +41,14 @@ $(TARGET): $(OBJECTS)
 
 # Nettoyage des fichiers compilés
 clean:
-	rm -f $(OBJECTS) $(TARGET)
-start:
-	./RobotArena
-.PHONY: all clean
+	rm -f *.o $(TARGET) $(TEST_TARGET)
+
+# Exécution de l'application principale
+start: $(TARGET)
+	./$(TARGET)
+
+# Exécution des tests
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+.PHONY: all clean start test
