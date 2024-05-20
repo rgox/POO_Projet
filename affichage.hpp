@@ -16,8 +16,8 @@ class Affiche {
 		Affiche(Hexagone& hexagone, Robot& rob1, Robot& rob2)
     : hexagon(hexagone), P1(rob1), P2(rob2) {
 
-			this->texture.loadFromFile("background.jpg");
-			if (!texture.loadFromFile("background.jpg")) {
+			this->texture.loadFromFile("background.png");
+			if (!texture.loadFromFile("background.png")) {
 				// Gestion de l'erreur si le chargement de la texture échoue
 				std::cout << "Erreur de chargement de l'image" << std::endl;
 			}
@@ -38,17 +38,17 @@ class Affiche {
 
 	private:
 		Hexagone& hexagon;
-		
-    	Robot& P1;
-    	Robot& P2;
-
-		sf::Texture texture;
-		sf::Sprite sprite;
-		int nbPlayers=0;
+		Robot& P1;
+		Robot& P2;
+		sf::Font font;
+		sf::Texture texture3, texture4, texture;
+		sf::Sprite sprite3, sprite4, sprite;
+		sf::Text VieP1, SpeedP1, DefenseP1;
+		sf::Text VieP2, SpeedP2, DefenseP2;
+		int nbPlayers;
 		std::vector<Bonus> bonuses;
-		
-		int P1Wins = 0;
-    	int P2Wins = 0;
+		int initialHealth1, initialHealth2;
+		int P1Wins, P2Wins;
 		
 };
 

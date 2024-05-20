@@ -13,22 +13,20 @@ private:
     sf::RectangleShape rectangleShape;
     sf::ConvexShape triangleShape;
     std::string shape;
-    int type = rand() % 4 + 1;
+    int type;
     int apptime = 10;
 
 public:
-    Bonus(Hexagone& arene,const sf::RenderWindow& window) {
-        // Initialiser le générateur de nombres pseudo-aléatoires avec le temps actuel
-        srand(static_cast<unsigned int>(time(nullptr)));
-
+    Bonus(Hexagone& arene, const sf::RenderWindow& window) {
         // Générer une position aléatoire dans l'hexagone
         do {
             position.x = static_cast<float>(rand() % window.getSize().x); // Position x aléatoire dans les limites de la fenêtre
             position.y = static_cast<float>(rand() % window.getSize().y); // Position y aléatoire dans une fenêtre de 800x600
         } while (!arene.isInside(position.x, position.y));
 
-        // Créer une forme aléatoire (dans cet exemple, un cercle, un rectangle ou un triangle)
-        int shapeType = rand() % 3;
+        // Initialiser le type de bonus et la forme de manière aléatoire
+        type = rand() % 4 + 1; // Types de bonus de 1 à 4
+        int shapeType = rand() % 3; // Type de forme (0: cercle, 1: rectangle, 2: triangle)
         switch (shapeType) {
             case 0: // Cercle
                 circleShape.setRadius(20);
@@ -56,7 +54,7 @@ public:
                 triangleShape.setFillColor(sf::Color::Red);
                 triangleShape.setOutlineThickness(2);
                 triangleShape.setOutlineColor(sf::Color::Red);
-                triangleShape.setOrigin(0, 0); // Origine au centre du triangle
+                triangleShape.setOrigin(20, 20); // Origine au centre du triangle
                 triangleShape.setPosition(position);
                 shape = "triangle";
                 break;
@@ -73,11 +71,11 @@ public:
     int getBonusType() const { return type; }
 
     void drawBonus(sf::RenderWindow& window) const {
-        if (circleShape.getRadius() != 0) {
+        if (shape == "cercle") {
             window.draw(circleShape);
-        } else if (rectangleShape.getSize() != sf::Vector2f(0, 0)) {
+        } else if (shape == "rectangle") {
             window.draw(rectangleShape);
-        } else {
+        } else if (shape == "triangle") {
             window.draw(triangleShape);
         }
     }

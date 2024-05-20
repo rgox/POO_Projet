@@ -1,14 +1,14 @@
 #include "geometry.hpp"
 
+float crossProduct(const sf::Vector2f& a, const sf::Vector2f& b) {
+    return a.x * b.y - a.y * b.x;
+}
+
+sf::Vector2f subtract(const sf::Vector2f& a, const sf::Vector2f& b) {
+    return sf::Vector2f(a.x - b.x, a.y - b.y);
+}
+
 bool doLinesIntersect(const LineSegment& line1, const LineSegment& line2) {
-    auto crossProduct = [](const sf::Vector2f& a, const sf::Vector2f& b) -> float {
-        return a.x * b.y - a.y * b.x;
-    };
-
-    auto subtract = [](const sf::Vector2f& a, const sf::Vector2f& b) -> sf::Vector2f {
-        return sf::Vector2f(a.x - b.x, a.y - b.y);
-    };
-
     sf::Vector2f r = subtract(line1.p2, line1.p1);
     sf::Vector2f s = subtract(line2.p2, line2.p1);
     sf::Vector2f qp = subtract(line2.p1, line1.p1);

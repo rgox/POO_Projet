@@ -268,16 +268,16 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 
 	//Sniper
 	sf::Texture police1;
-    if (!police1.loadFromFile("police.png") ) {
+    if (!police1.loadFromFile("sniper.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
         printf("Problème chargement image sniper");
     }
 	sf::Sprite sniper1;
 	sniper1.setTexture(police1);
-	sniper1.setScale(2, 2);
+	sniper1.setScale(0.25, 0.25);
 	sf::Sprite sniper2;
 	sniper2.setTexture(police1);
-	sniper2.setScale(2, 2);
+	sniper2.setScale(0.25, 0.25);
 	
 
 	sniper1.setPosition(window.getSize().x/2-250,window.getSize().y/2);
@@ -285,16 +285,16 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
 	
 	//Tank
 	sf::Texture camion1;
-    if (!camion1.loadFromFile("truckcabin.png") ) {
+    if (!camion1.loadFromFile("tank.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
         printf("Problème chargement image sniper");
     }
 	sf::Sprite tank1;
 	tank1.setTexture(camion1);
-	tank1.setScale(2, 2);
+	tank1.setScale(0.25, 0.25);
 	sf::Sprite tank2;
 	tank2.setTexture(camion1);
-	tank2.setScale(2, 2);
+	tank2.setScale(0.25, 0.25);
 	
 
 	tank1.setPosition(window.getSize().x/2-250,window.getSize().y/2);
@@ -302,17 +302,16 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
  
  	//Course
 	sf::Texture F1;
-    if (!F1.loadFromFile("formula.png") ) {
+    if (!F1.loadFromFile("course.png") ) {
         // Gestion de l'erreur si le chargement de la texture échoue
         printf("Problème chargement image sniper");
     }
 	sf::Sprite course1;
 	course1.setTexture(F1);
-	course1.setScale(2, 2);
+	course1.setScale(0.25, 0.25);
 	sf::Sprite course2;
 	course2.setTexture(F1);
-	course2.setScale(2, 2);
-	
+	course2.setScale(0.25, 0.25);
 
 	course1.setPosition(window.getSize().x/2-250,window.getSize().y/2);
 	course2.setPosition(window.getSize().x/2+250,window.getSize().y/2);

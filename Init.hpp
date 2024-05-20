@@ -15,8 +15,8 @@ class Init {
 	public:
 	
 		Init() {
-			this->texture.loadFromFile("background.jpg");
-			if (!texture.loadFromFile("background.jpg")) {
+			this->texture.loadFromFile("background.png");
+			if (!texture.loadFromFile("background.png")) {
 				// Gestion de l'erreur si le chargement de la texture échoue
 				std::cout << "Erreur de chargement de l'image" << std::endl;
 			}

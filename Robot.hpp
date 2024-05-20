@@ -147,6 +147,11 @@ protected:
 	float orientation; // Angle en radians
 	float lastOrientation; // Sauvegarde de la dernière orientation
 	std::vector<Projectile> projectiles;
+	int shotsFired;
+    sf::Clock shotClock;
+    static constexpr int maxShots = 3;
+    sf::Time shotInterval = sf::seconds(5);
+
 
 };
 

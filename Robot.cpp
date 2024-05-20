@@ -6,14 +6,19 @@
 
 // Constructeur
 Robot::Robot(Hexagone& hex, float x, float y, char controlScheme, sf::Color color)
-: hexagon(hex), position(x,y),  controlScheme(controlScheme),orientation(0.0f){
-		rectangleShape.setSize(sf::Vector2f(width, height));
-		rectangleShape.setFillColor(color);
-		rectangleShape.setOutlineThickness(2);
-		rectangleShape.setOutlineColor(color);
-		rectangleShape.setOrigin(width/2,height/2);
-		rectangleShape.setPosition(position);
-		rectangleShape.setRotation(orientation * 180 / M_PI); // Initialiser l'orientation
+    : hexagon(hex), position(x, y), name(), health(10), speed(10),
+      attackPower(0), defense(0), lastPosX(0.0f), lastPosY(0.0f),
+      rectangleShape(), controlScheme(controlScheme), color(color),
+      width(40), height(30), lastValidPosition(0.0f, 0.0f),
+      orientation(0.0f), lastOrientation(0.0f), projectiles(),
+      shotsFired(0), shotClock(), shotInterval(sf::seconds(5)) {
+    rectangleShape.setSize(sf::Vector2f(width, height));
+    rectangleShape.setFillColor(color);
+    rectangleShape.setOutlineThickness(2);
+    rectangleShape.setOutlineColor(color);
+    rectangleShape.setOrigin(width / 2, height / 2);
+    rectangleShape.setPosition(position);
+    rectangleShape.setRotation(orientation * 180 / M_PI);
 		sf::Font font;
 		if (!font.loadFromFile("Ecriture.ttf")) {
 			std::cerr << "Failed to load Robot font" << std::endl;
@@ -365,27 +370,35 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
 }
 
 void Robot::fire() {
-    projectiles.emplace_back(position.x, position.y, orientation, 20.0f); 
-}
-
-void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
-    for (auto& projectile : projectiles) {
-        projectile.update();
+    // Vérifier si le délai de tir est écoulé
+    if (shotClock.getElapsedTime() > shotInterval) {
+        shotClock.restart();
+        shotsFired = 0; // Réinitialiser le compteur de tirs
     }
 
-    // Supprimer les projectiles qui sont hors de l'écran
-    projectiles.erase(
-        std::remove_if(projectiles.begin(), projectiles.end(),
-            [this, &other](const Projectile& projectile) {
-                if (!hexagon.isInside(projectile.getPosition().x, projectile.getPosition().y)) {
-                    return true;
-                }
-                if (other.get_Shape().getGlobalBounds().contains(projectile.getPosition())) {
-                    other.setHealth(other.getHealth() - this->attackPower * 0.5);
-                    return true;
-                }
-                return false;
-            }),
-        projectiles.end()
-    );
+    // Vérifier si le nombre de tirs maximum n'est pas atteint
+    if (shotsFired < maxShots) {
+        float projectileSpeed = 20.0f; // Vitesse du projectile
+        projectiles.emplace_back(position.x, position.y, projectileSpeed, orientation);
+        shotsFired++;
+    }
+}
+
+
+void Robot::updateProjectiles(sf::RenderWindow& window, Robot& other) {
+    // Utiliser un itérateur pour traverser les projectiles et les supprimer en toute sécurité
+    for (auto it = projectiles.begin(); it != projectiles.end();) {
+        it->update();
+
+        // Supprimer les projectiles hors de l'écran ou ayant touché l'autre robot
+        if (!hexagon.isInside(it->getPosition().x, it->getPosition().y) || 
+            other.get_Shape().getGlobalBounds().contains(it->getPosition())) {
+            if (other.get_Shape().getGlobalBounds().contains(it->getPosition())) {
+                other.setHealth(other.getHealth() - this->attackPower * 0.5);
+            }
+            it = projectiles.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
