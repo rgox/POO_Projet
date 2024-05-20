@@ -23,11 +23,12 @@ public:
 	//Dessine le projectile
     void draw(sf::RenderWindow& window);
     
+	static bool loadTexture();
 
 private:
 	float x, y, angle, speed;
 	//Forme et texture du projectile
-    sf::Texture texture;
+    static sf::Texture texture;
     sf::Sprite sprite;
 	//Vitesse
     sf::Vector2f velocity;

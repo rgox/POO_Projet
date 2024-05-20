@@ -1,32 +1,36 @@
 #include "Projectile.hpp"
 
-//Constructeur
-Projectile::Projectile(float x, float y, float speed, float orientation) 
-	: x(x), y(y), angle(orientation), speed(speed){
-    if (!texture.loadFromFile("projectile.png")) {
-        // Handle error if texture loading fails
-        printf("Failed to load projectile image");
-        return;
-    }
+sf::Texture Projectile::texture;
 
+//constructeur
+Projectile::Projectile(float x, float y, float speed, float orientation) 
+    : x(x), y(y), angle(orientation), speed(speed) {
+    
+    //utilise la texture static
     sprite.setTexture(texture);
     sprite.setPosition(x, y);
 
-    // Scale the image down by 4
     sprite.setScale(0.125f, 0.125f);
 
-    // Center the sprite's origin
+    
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin(bounds.width / 2, bounds.height / 2);
 
-    // Apply rotation based on the robot's orientation
-    sprite.setRotation(orientation * 180 / M_PI); // Convert orientation from radians to degrees
+    
+    sprite.setRotation(orientation * 180 / M_PI); 
 
-    // Set the velocity using the orientation
     velocity.x = speed * std::cos(orientation);
     velocity.y = speed * std::sin(orientation);
 }
 
+bool Projectile::loadTexture() {
+    if (!texture.loadFromFile("projectile.png")) {
+        // Handle error if texture loading fails
+        printf("Failed to load projectile image");
+        return false;
+    }
+    return true;
+}
 
 //Mets à jour la position du projectile en fonction de sa vitesse
 void Projectile::update() {

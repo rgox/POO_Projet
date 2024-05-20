@@ -11,7 +11,7 @@ Robot::Robot(Arene& hex, float x, float y, char controlScheme, sf::Color color)
       rectangleShape(), controlScheme(controlScheme), color(color),
       width(40), height(30), lastValidPosition(0.0f, 0.0f),
       orientation(0.0f), lastOrientation(0.0f), projectiles(),
-      shotsFired(0), shotClock(), shotInterval(sf::seconds(5)) {
+      missilesFiredThisSecond(0) {
 		//Forme rectangulaire permettant de dessiner schématiquement le robot
 		rectangleShape.setSize(sf::Vector2f(width, height));
 		rectangleShape.setFillColor(color);
@@ -26,6 +26,11 @@ Robot::Robot(Arene& hex, float x, float y, char controlScheme, sf::Color color)
 		}
 		name.setString("");
 		name.setFont(font);
+
+		//Vérifie que la texture des projectiles est load
+		if (!Projectile::loadTexture()) {
+			std::cerr << "Failed to load projectile texture" << std::endl;
+		}
 		}
 
 // Destructeur
@@ -378,7 +383,19 @@ void Robot::drawDebugPoints(sf::RenderWindow& window) {
 
 //Tire les projectiles
 void Robot::fire() {
-    projectiles.emplace_back(position.x, position.y, orientation, 20.0f); 
+    sf::Time elapsedTime = fireClock.getElapsedTime();
+
+    // Reset le compteur toute les secondes
+    if (elapsedTime.asSeconds() >= 1.0f) {
+        missilesFiredThisSecond = 0;
+        fireClock.restart();
+    }
+
+    //vérifie que l'on peut tirer
+    if (missilesFiredThisSecond < maxMissilesPerSecond) {
+        projectiles.emplace_back(position.x, position.y, 20.0f, orientation);
+        missilesFiredThisSecond++;
+    }
 }
 
 // Met à jour la position des projectiles lancés par le robot

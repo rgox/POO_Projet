@@ -123,10 +123,9 @@ class Robot {
 	float orientation; // Angle en radians
 	float lastOrientation; // Sauvegarde de la dernière orientation
 	std::vector<Projectile> projectiles;
-	int shotsFired; //
-    sf::Clock shotClock;
-    static constexpr int maxShots = 3;
-    sf::Time shotInterval = sf::seconds(5);
+	sf::Clock fireClock;         // Clock pour le tir rate
+    int missilesFiredThisSecond; //conteur de missile
+    const int maxMissilesPerSecond = 3;
 
 
 };
