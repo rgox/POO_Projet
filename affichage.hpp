@@ -46,10 +46,10 @@ class Affiche {
     	Robot& P1;
 		Robot& P2;
 		sf::Font font;
-		sf::Texture texture3, texture4, texture;
-		sf::Sprite sprite3, sprite4, sprite;
-		sf::Text VieP1, SpeedP1, DefenseP1;
-		sf::Text VieP2, SpeedP2, DefenseP2;
+		sf::Texture texture, texture3, texture4, texture5, texture6;
+		sf::Sprite sprite, sprite3, sprite4, sprite5, sprite6;
+		sf::Text VieP1, SpeedP1, DefenseP1, AttackP1;
+		sf::Text VieP2, SpeedP2, DefenseP2, AttackP2;
 		int nbPlayers;
 		std::vector<Bonus> bonuses;
 		int initialHealth1, initialHealth2;

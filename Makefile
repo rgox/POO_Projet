@@ -6,7 +6,7 @@ TEST_TARGET = TestSuite
 CXX = g++
 
 # Options de compilation
-CXXFLAGS = -std=c++11 -Wall -g
+CXXFLAGS = -std=c++11 -Wall -g -I/usr/include/SFML
 
 # Liens vers les bibliothèques de SFML et Boost.Test
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system

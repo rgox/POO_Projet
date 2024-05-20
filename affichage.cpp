@@ -431,4 +431,3 @@ void Affiche::showEndMessage(sf::RenderWindow& window, const std::string& winner
     	}
 	}
 }
-

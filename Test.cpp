@@ -1,4 +1,6 @@
 #include "Test.hpp"
+#include <algorithm>
+#include <cmath>
 #include <boost/test/unit_test.hpp>
 #include "arene.hpp"
 #include "bonus.hpp"
@@ -6,6 +8,13 @@
 #include "Tank.hpp"
 #include "Sniper.hpp"
 #include "Robot.hpp"
+#include "affichage.hpp"
+#include <SFML/System/String.hpp>
+#include <iostream>
+#include "geometry.hpp"
+#include "Init.hpp"
+#include "Projectile.hpp"
+
 
 TestSuite::TestSuite() {
     // Initialisation de la suite de tests si nécessaire
@@ -260,6 +269,23 @@ BOOST_AUTO_TEST_CASE(testRobotSettersGetters) {
 
     robot.set_Orientation(1.5f);
     BOOST_CHECK_CLOSE(robot.getOrientation(), 1.5f, 0.1);
+
+	sf::Font font;
+    if (!font.loadFromFile("Ecriture.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+    }
+	robot.set_name("TestName", font);
+    BOOST_CHECK_EQUAL(robot.get_name().getString().toAnsiString(), "TestName");
+
+    robot.setNamePosition(200, 200);
+    BOOST_CHECK_EQUAL(robot.get_name_draw().getPosition().x, 200);
+    BOOST_CHECK_EQUAL(robot.get_name_draw().getPosition().y, 200);
+
+    BOOST_CHECK_EQUAL(robot.getWidth(), 77);
+    BOOST_CHECK_EQUAL(robot.getHeight(), 36);
+    BOOST_CHECK_EQUAL(robot.getControlScheme(), 'A');
+    BOOST_CHECK(!robot.getLineSegments().empty());
+    BOOST_CHECK(robot.get_Shape().getSize().x > 0);
 }
 
 BOOST_AUTO_TEST_CASE(testRobotMovement) {
@@ -316,5 +342,291 @@ BOOST_AUTO_TEST_CASE(testRobotDraw) {
     // Vérifier que la méthode draw ne cause pas d'erreur (test visuel impossible)
     BOOST_CHECK_NO_THROW(robot.draw(window));
 }
+BOOST_AUTO_TEST_CASE(testRobotBoundaryHandling) {
+    Arene arene(200, 200);
+    Course robot(arene, 100, 100, 'A', sf::Color::Blue);
+
+    // Test de isInsideBoundary
+    BOOST_CHECK(robot.isInsideBoundary());
+
+    // Test de isTouchingBoundary
+    robot.setPosition(10, 10); // Mettez la position près du bord pour toucher la limite
+    BOOST_CHECK(robot.isTouchingBoundary());
+
+    // Test de repositionToCenter
+    robot.repositionToCenter();
+    BOOST_CHECK(robot.getX() > 0 && robot.getX() < 200);
+    BOOST_CHECK(robot.getY() > 0 && robot.getY() < 200);
+}
+
+BOOST_AUTO_TEST_CASE(testRobotCollisionHandling) {
+    Arene arene(200, 200);
+    Course robot1(arene, 100, 100, 'A', sf::Color::Blue);
+    Course robot2(arene, 110, 100, 'B', sf::Color::Red);
+
+    // Test de handleCollision
+    robot1.handleCollision(robot2);
+    BOOST_CHECK(robot1.getX() != 100 || robot1.getY() != 100);
+    BOOST_CHECK(robot2.getX() != 110 || robot2.getY() != 100);
+}
+
+BOOST_AUTO_TEST_CASE(testRobotSaveAndRevert) {
+    Arene arene(200, 200);
+    Course robot(arene, 100, 100, 'A', sf::Color::Blue);
+
+    // Test de saveLastPosition et revertToLastPosition
+    robot.saveLastPosition();
+    robot.setPosition(150, 150);
+    robot.revertToLastPosition();
+    BOOST_CHECK_EQUAL(robot.getX(), 100);
+    BOOST_CHECK_EQUAL(robot.getY(), 100);
+
+    // Test de saveLastOrientation et revertToLastOrientation
+    robot.saveLastOrientation();
+    robot.set_Orientation(1.0f);
+    robot.revertToLastOrientation();
+    BOOST_CHECK_CLOSE(robot.getOrientation(), 0.0f, 0.1);
+}
+
+BOOST_AUTO_TEST_CASE(testRobotDrawDebugPoints) {
+    sf::RenderWindow window(sf::VideoMode(200, 200), "Test Window");
+    Arene arene(200, 200);
+
+    Course robot(arene, 100, 100, 'A', sf::Color::Blue);
+
+    // Vérifier que la méthode drawDebugPoints ne cause pas d'erreur (test visuel impossible)
+    BOOST_CHECK_NO_THROW(robot.drawDebugPoints(window));
+}
+
+//#################################### TEST CLASSE AFFICHAGE ###############################################
+
+BOOST_AUTO_TEST_CASE(testAfficheConstructor) {
+    Arene arene(800, 600);
+    Course robot1(arene, 100, 100, 'A', sf::Color::Blue);
+    Course robot2(arene, 200, 200, 'B', sf::Color::Red);
+
+    BOOST_CHECK_NO_THROW(Affiche affiche(arene, robot1, robot2));
+}
+
+
+
+BOOST_AUTO_TEST_CASE(testAfficheUpdateControls) {
+    Arene arene(800, 600);
+    Course robot1(arene, 100, 100, 'A', sf::Color::Blue);
+    Course robot2(arene, 200, 200, 'B', sf::Color::Red);
+    Affiche affiche(arene, robot1, robot2);
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Test Window");
+
+    // Simulate key press
+    robot1.setSpeed(10);
+    sf::Keyboard::Key key = sf::Keyboard::Up;
+    sf::Event event;
+    event.type = sf::Event::KeyPressed;
+    event.key.code = key;
+
+    // Test moveForward
+    window.pollEvent(event);
+    affiche.updateControls(robot1);
+    BOOST_CHECK_EQUAL(robot1.getX(), 100);
+    BOOST_CHECK_EQUAL(robot1.getY(), 100);
+
+    // Reset position for other tests
+    robot1.setPosition(100, 100);
+    key = sf::Keyboard::Left;
+    event.key.code = key;
+
+    // Test rotateLeft
+    window.pollEvent(event);
+    affiche.updateControls(robot1);
+    BOOST_CHECK_EQUAL(robot1.getOrientation(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(testAfficheShowEndMessage) {
+    Arene arene(800, 600);
+    Course robot1(arene, 100, 100, 'A', sf::Color::Blue);
+    Course robot2(arene, 200, 200, 'B', sf::Color::Red);
+    Affiche affiche(arene, robot1, robot2);
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Test Window");
+
+    BOOST_CHECK_NO_THROW(affiche.showEndMessage(window, "Player 1"));
+}
+
+// ########################################## TEST CLASSE GEOMETRY #################################################
+
+BOOST_AUTO_TEST_CASE(testCrossProduct) {
+    sf::Vector2f a(1, 2);
+    sf::Vector2f b(3, 4);
+    float result = crossProduct(a, b);
+    BOOST_CHECK_CLOSE(result, -2.0f, 0.1);
+}
+
+BOOST_AUTO_TEST_CASE(testSubtract) {
+    sf::Vector2f a(5, 6);
+    sf::Vector2f b(3, 4);
+    sf::Vector2f result = subtract(a, b);
+    BOOST_CHECK_EQUAL(result.x, 2.0f);
+    BOOST_CHECK_EQUAL(result.y, 2.0f);
+}
+
+BOOST_AUTO_TEST_CASE(testDoLinesIntersect_Intersecting) {
+    LineSegment line1 = { sf::Vector2f(0, 0), sf::Vector2f(4, 4) };
+    LineSegment line2 = { sf::Vector2f(0, 4), sf::Vector2f(4, 0) };
+    bool result = doLinesIntersect(line1, line2);
+    BOOST_CHECK(result);
+}
+
+BOOST_AUTO_TEST_CASE(testDoLinesIntersect_NonIntersecting) {
+    LineSegment line1 = { sf::Vector2f(0, 0), sf::Vector2f(2, 2) };
+    LineSegment line2 = { sf::Vector2f(3, 3), sf::Vector2f(5, 5) };
+    bool result = doLinesIntersect(line1, line2);
+    BOOST_CHECK(!result);
+}
+
+BOOST_AUTO_TEST_CASE(testDoLinesIntersect_Parallel) {
+    LineSegment line1 = { sf::Vector2f(0, 0), sf::Vector2f(2, 2) };
+    LineSegment line2 = { sf::Vector2f(1, 1), sf::Vector2f(3, 3) };
+    bool result = doLinesIntersect(line1, line2);
+    BOOST_CHECK(!result);
+}
+
+BOOST_AUTO_TEST_CASE(testDoLinesIntersect_CollinearNonOverlapping) {
+    LineSegment line1 = { sf::Vector2f(0, 0), sf::Vector2f(2, 2) };
+    LineSegment line2 = { sf::Vector2f(3, 3), sf::Vector2f(4, 4) };
+    bool result = doLinesIntersect(line1, line2);
+    BOOST_CHECK(!result);
+}
+
+BOOST_AUTO_TEST_CASE(testDoLinesIntersect_CollinearOverlapping) {
+    LineSegment line1 = { sf::Vector2f(0, 0), sf::Vector2f(3, 3) };
+    LineSegment line2 = { sf::Vector2f(2, 2), sf::Vector2f(4, 4) };
+    bool result = doLinesIntersect(line1, line2);
+    BOOST_CHECK(!result);
+}
+
+
+// ########################################## TEST CLASSE INIT #################################################
+
+BOOST_AUTO_TEST_CASE(testInitMenu) {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Test Window");
+    Init init;
+
+    int mode = 0;
+    // Vérifier que le menu ne lance pas d'exception
+    BOOST_CHECK_NO_THROW(init.menu(window, &mode));
+
+    // Simuler un clic de souris sur l'option de jeu solo
+    sf::Event event;
+    event.type = sf::Event::MouseButtonPressed;
+    event.mouseButton.button = sf::Mouse::Left;
+    event.mouseButton.x = window.getSize().x / 2 - 50;
+    event.mouseButton.y = window.getSize().y / 2 - 100;
+    window.pollEvent(event);
+    BOOST_CHECK_NO_THROW(init.menu(window, &mode));
+    BOOST_CHECK_EQUAL(mode, 2); //Il faut choisir 2 joueurs !!
+}
+
+BOOST_AUTO_TEST_CASE(testInitChoose) {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Test Window");
+    Init init;
+
+    int res[2] = {0, 0};
+    // Vérifier que choose ne lance pas d'exception
+    BOOST_CHECK_NO_THROW(init.choose(window, res));
+
+    // Simuler un clic de souris pour sélectionner le tank pour le joueur 1
+    sf::Event event;
+    event.type = sf::Event::MouseButtonPressed;
+    event.mouseButton.button = sf::Mouse::Left;
+    event.mouseButton.x = window.getSize().x / 2 - 150;
+    event.mouseButton.y = window.getSize().y / 2;
+    window.pollEvent(event);
+    BOOST_CHECK_NO_THROW(init.choose(window, res));
+    BOOST_CHECK_EQUAL(res[0], 2);
+}
+
+BOOST_AUTO_TEST_CASE(testInitName) {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Test Window");
+    Init init;
+
+    char* player1Name = nullptr;
+    char* player2Name = nullptr;
+
+    // Vérifier que name ne lance pas d'exception
+    BOOST_CHECK_NO_THROW(init.name(window, player1Name, player2Name));
+
+    // Simuler la saisie des noms des joueurs et la pression sur le bouton Go
+    sf::Event event;
+    event.type = sf::Event::MouseButtonPressed;
+    event.mouseButton.button = sf::Mouse::Left;
+    event.mouseButton.x = window.getSize().x / 2;
+    event.mouseButton.y = window.getSize().y / 2 + 50;
+    window.pollEvent(event);
+    BOOST_CHECK_NO_THROW(init.name(window, player1Name, player2Name));
+
+    // Vérifier que les noms des joueurs sont définis
+    BOOST_CHECK(player1Name != nullptr);
+    BOOST_CHECK(player2Name != nullptr);
+
+    // Nettoyage
+    free(player1Name);
+    free(player2Name);
+}
+
+// ##################################### TEST CLASSE PROJECTILE #################################################
+
+BOOST_AUTO_TEST_CASE(testProjectileLoadTexture) {
+    // Vérifier que la texture est chargée correctement
+    BOOST_CHECK(Projectile::loadTexture());
+}
+
+BOOST_AUTO_TEST_CASE(testProjectileInitialization) {
+    float x = 100.0f;
+    float y = 100.0f;
+    float speed = 5.0f;
+    float orientation = 0.0f; // vers la droite
+
+    Projectile projectile(x, y, speed, orientation);
+
+    // Vérifier la position initiale
+    BOOST_CHECK_EQUAL(projectile.getPosition().x, x);
+    BOOST_CHECK_EQUAL(projectile.getPosition().y, y);
+
+    // Vérifier les bounds du projectile
+    sf::FloatRect bounds = projectile.getBounds();
+    BOOST_CHECK(bounds.width > 0);
+    BOOST_CHECK(bounds.height > 0);
+}
+
+BOOST_AUTO_TEST_CASE(testProjectileUpdate) {
+    float x = 100.0f;
+    float y = 100.0f;
+    float speed = 5.0f;
+    float orientation = 0.0f; // vers la droite
+
+    Projectile projectile(x, y, speed, orientation);
+
+    // Mettre à jour la position
+    projectile.update();
+
+    // Vérifier la nouvelle position
+    BOOST_CHECK_EQUAL(projectile.getPosition().x, x + speed);
+    BOOST_CHECK_EQUAL(projectile.getPosition().y, y);
+}
+
+BOOST_AUTO_TEST_CASE(testProjectileDraw) {
+    sf::RenderWindow window(sf::VideoMode(200, 200), "Test Window");
+    float x = 100.0f;
+    float y = 100.0f;
+    float speed = 5.0f;
+    float orientation = 0.0f; // vers la droite
+
+    Projectile projectile(x, y, speed, orientation);
+
+    // Vérifier que la méthode draw ne lance pas d'exception
+    BOOST_CHECK_NO_THROW(projectile.draw(window));
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
