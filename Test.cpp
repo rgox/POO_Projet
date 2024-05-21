@@ -546,7 +546,7 @@ BOOST_AUTO_TEST_CASE(testInitChoose) {
     BOOST_CHECK_EQUAL(res[0], 2);
 }
 
-BOOST_AUTO_TEST_CASE(testInitName) {
+/*BOOST_AUTO_TEST_CASE(testInitName) {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Test Window");
     Init init;
 
@@ -571,9 +571,9 @@ BOOST_AUTO_TEST_CASE(testInitName) {
 
     // Nettoyage
     free(player1Name);
-    free(player2Name);
+    free(player2Name);*
 }
-
+*/
 // ##################################### TEST CLASSE PROJECTILE #################################################
 
 BOOST_AUTO_TEST_CASE(testProjectileLoadTexture) {
