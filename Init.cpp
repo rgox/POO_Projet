@@ -464,101 +464,116 @@ bool Init::choose(sf::RenderWindow& window,int *res) {
     return false; // Retourne false par défaut
 }
 
-//Méthode name
 bool Init::name(sf::RenderWindow& window, char*& player1Name, char*& player2Name) {
-	//Initialisation police
-        sf::Font font;
-        if (!font.loadFromFile("Ecriture.ttf")) {
-            std::cerr << "Failed to load font" << std::endl;
-            return false;
-        }
+    // Initialisation de la police
+    sf::Font font;
+    if (!font.loadFromFile("Ecriture.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+        return false;
+    }
 
-	//Initialisation des texts
-		sf::Text Player1;
-		Player1.setFont(font);
-		Player1.setString("Player 1");
-		Player1.setCharacterSize(35);
-		Player1.setFillColor(sf::Color::White);
-		Player1.setPosition(window.getSize().x/2-400, window.getSize().y/2-100);
+    // Initialisation des textes
+    sf::Text Player1;
+    Player1.setFont(font);
+    Player1.setString("Player 1");
+    Player1.setCharacterSize(35);
+    Player1.setFillColor(sf::Color::White);
+    Player1.setPosition(window.getSize().x / 2 - 400, window.getSize().y / 2 - 100);
 
+    sf::Text Player2;
+    Player2.setFont(font);
+    Player2.setString("Player 2");
+    Player2.setCharacterSize(35);
+    Player2.setFillColor(sf::Color::White);
+    Player2.setPosition(window.getSize().x / 2 + 300, window.getSize().y / 2 - 100);
 
-		sf::Text Player2;
-		Player2.setFont(font);
-		Player2.setString("Player 2");
-		Player2.setCharacterSize(35);
-		Player2.setFillColor(sf::Color::White);
-		Player2.setPosition(window.getSize().x/2+300, window.getSize().y/2-100);
+    sf::Text goButton;
+    goButton.setFont(font);
+    goButton.setString("Go !");
+    goButton.setCharacterSize(25);
+    goButton.setFillColor(sf::Color::White);
+    goButton.setPosition(window.getSize().x / 2.0f - 50, window.getSize().y / 2.0f + 50);
 
+    // Déclaration des inputbox des noms des joueurs
+    InputBox inputBox1(300, 50, font);
+    inputBox1.setPosition(window.getSize().x / 2 - 500, window.getSize().y / 2);
 
-        sf::Text goButton;
-        goButton.setFont(font);
-        goButton.setString("Go !");
-        goButton.setCharacterSize(25);
-        goButton.setFillColor(sf::Color::White);
-        goButton.setPosition(window.getSize().x / 2.0f - 50, window.getSize().y / 2.0f + 50);
+    InputBox inputBox2(300, 50, font);
+    inputBox2.setPosition(window.getSize().x / 2 + 200, window.getSize().y / 2);
 
-		//Déclaration des inputbox des noms des joueurs
-		InputBox inputBox1(300, 50, font);
-        inputBox1.setPosition(window.getSize().x/2-500, window.getSize().y/2);
+    // Variable permettant de savoir quel Zone text est sélectionnée
+    bool isEnteringPlayer1 = true;
+    inputBox1.setFocus(true);
 
-        InputBox inputBox2(300, 50, font);
-        inputBox2.setPosition(window.getSize().x/2+200, window.getSize().y/2);
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
 
-		//Variable permettant de savoir quel Zone text est séléctionnée
-        bool isEnteringPlayer1 = true;
-        inputBox1.setFocus(true);
-
-        while (window.isOpen()) {
-            sf::Event event;
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-
-                if (event.type == sf::Event::MouseButtonPressed) {
-                    sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-					//On écrit sur la Inputbox1
-                    if (inputBox1.contains(event.mouseButton.x, event.mouseButton.y)) {
-                        inputBox1.setFocus(true);
-                        inputBox2.setFocus(false);
-                    } else if (inputBox2.contains(event.mouseButton.x, event.mouseButton.y)) {//On écrit sur la Inputbox2
-                        inputBox1.setFocus(false);
-                        inputBox2.setFocus(true);
-                    } else if (goButton.getGlobalBounds().contains(mousePosition)) {//On appuie sur go
-                        player1Name = strdup(inputBox1.getString().c_str());
-                        player2Name = strdup(inputBox2.getString().c_str());
-                        return true; // Retourne true pour démarrer le jeu
-                    } else {
-                        inputBox1.setFocus(false);
-                        inputBox2.setFocus(false);
+            if (event.type == sf::Event::MouseButtonPressed) {
+                sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+                // On écrit sur la Inputbox1
+                if (inputBox1.contains(event.mouseButton.x, event.mouseButton.y)) {
+                    inputBox1.setFocus(true);
+                    inputBox2.setFocus(false);
+                } else if (inputBox2.contains(event.mouseButton.x, event.mouseButton.y)) { // On écrit sur la Inputbox2
+                    inputBox1.setFocus(false);
+                    inputBox2.setFocus(true);
+                } else if (goButton.getGlobalBounds().contains(mousePosition)) { // On appuie sur go
+                    // Libération de la mémoire précédente
+                    if (player1Name) {
+                        free(player1Name);
                     }
-                }
-
-                inputBox1.handleEvent(event);
-                inputBox2.handleEvent(event);
-				
-				//Si on appuiensur enter plutôt que sur GO
-
-                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
-                    if (isEnteringPlayer1) {
-                        inputBox1.setFocus(false);
-                        inputBox2.setFocus(true);
-                        isEnteringPlayer1 = false;
-                    } else {
-                        player1Name = strdup(inputBox1.getString().c_str());
-                        player2Name = strdup(inputBox2.getString().c_str());
-                        return true;
+                    if (player2Name) {
+                        free(player2Name);
                     }
+                    player1Name = strdup(inputBox1.getString().c_str());
+                    player2Name = strdup(inputBox2.getString().c_str());
+                    return true; // Retourne true pour démarrer le jeu
+                } else {
+                    inputBox1.setFocus(false);
+                    inputBox2.setFocus(false);
                 }
             }
 
-            window.clear();
-            inputBox1.draw(window);
-            inputBox2.draw(window);
-            window.draw(goButton);
-			window.draw(Player1);
-			window.draw(Player2);
-            window.display();
+            inputBox1.handleEvent(event);
+            inputBox2.handleEvent(event);
+
+            // Si on appuie sur enter plutôt que sur GO
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
+                if (isEnteringPlayer1) {
+                    inputBox1.setFocus(false);
+                    inputBox2.setFocus(true);
+                    isEnteringPlayer1 = false;
+                } else {
+                    // Libération de la mémoire précédente
+                    if (player1Name) {
+                        free(player1Name);
+                    }
+                    if (player2Name) {
+                        free(player2Name);
+                    }
+                    player1Name = strdup(inputBox1.getString().c_str());
+                    player2Name = strdup(inputBox2.getString().c_str());
+                    return true;
+                }
+            }
         }
 
-        return false;
+        window.clear();
+        inputBox1.draw(window);
+        inputBox2.draw(window);
+        window.draw(goButton);
+        window.draw(Player1);
+        window.draw(Player2);
+        window.display();
+		free(player1Name);
+		free(player2Name);
     }
+
+    return false;
+}
+
+
+

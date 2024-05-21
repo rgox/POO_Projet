@@ -119,17 +119,14 @@ int main() {
         delete rob2;
         rob1 = nullptr;
         rob2 = nullptr;
-        player1 = nullptr;
-        player2 = nullptr;
+
+        // Free player names
+        delete[] player1;
+        delete[] player2;
 
 		// Vérifier si la fenêtre a été fermée
         if (!window.isOpen()) {
             running = false;
-			// Libérez la mémoire avant de quitter le programme
-			free(rob1);
-			free(rob2);
-			free(player1);
-			free(player2);
         }
     }
 
